@@ -16,7 +16,6 @@ public class Cell extends Button {
         
         setMinSize(40, 40);
         setMaxSize(40, 40);
-        setStyle("-fx-background-color: #A0A0A0; -fx-border-color: #808080; -fx-border-width: 2px; -fx-alignment: center;");
     }
     
     // -- GETTER AND SETTERS --
@@ -29,6 +28,26 @@ public class Cell extends Button {
         return col;
     }
     
+    public void setCellUnrevealed() {
+        setStyle("-fx-background-color: #A0A0A0; -fx-border-color: #808080; -fx-border-width: 1px; -fx-alignment: center;");
+    }
+    
+    public void setCellAsMiner() {
+        setStyle("-fx-background-color: #FFD700; -fx-border-color: #000; -fx-border-width: 1px; -fx-alignment: center;");
+    }
+    
+    public void setCellAsSky() {
+        setStyle("-fx-background-color: #C2E7FF; -fx-border-width: 1px; -fx-alignment: center;");
+    }
+
+    public void setCellAsGrass() {
+        setStyle("-fx-background-color: #A3E055; -fx-border-color: #469B11; -fx-border-width: 1px; -fx-alignment: center;");
+    }
+
+   
     // -- OTHER FUNCTIONS --
+
+
+    
     
 }
