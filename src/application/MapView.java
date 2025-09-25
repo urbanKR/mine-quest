@@ -40,17 +40,15 @@ public class MapView {
 
         for (Cell[] row : gameModel.getMap().getCells()) {
             for (Cell cell : row) {
-                // Always reveal SKY and SKY_WALKABLE
+                // Always reveal SKY and GROUND
                 if (cell.getType() == CellType.SKY || cell.getType() == CellType.SKY_WALKABLE) {
                     cell.setRevealed(true);
                 } else {
                     int distance = Math.abs(minerRow - cell.getRow()) + Math.abs(minerCol - cell.getCol());
-                    if (distance <= maxDistance) {
-                        cell.setRevealed(true);
-                    }
+                    // Reveal if within distance, otherwise unreveal
+                    cell.setRevealed(distance <= maxDistance);
                 }
             }
         }
     }
-       
 }
