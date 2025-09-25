@@ -10,14 +10,8 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-	    // --- Map size ---
-	    int rows = 32;      // total rows
-	    int cols = 20;      // total columns
-	    int skyEnds = rows / 10;   // top 1/10 of rows
-	    int spawnMinerCol = cols / 2;  // middle column
-
 	    // --- Game model ---
-	    GameModel model = new GameModel(rows, cols, skyEnds - 1, spawnMinerCol);
+	    GameModel model = new GameModel();
 
 	    // --- GridPane for map ---
 	    GridPane gridPane = new GridPane();

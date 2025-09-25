@@ -1,8 +1,12 @@
 package application;
 
+
 public enum CellType {
     SKY,
-    GROUND,
-    BLOCK,
-    GOAL
+    SKY_WALKABLE,
+    GRASS,
+    DIRT
+    // IRON
+    // GOLD
+    // DIAMOND
 }

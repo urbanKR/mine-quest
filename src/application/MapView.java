@@ -40,20 +40,17 @@ public class MapView {
 
         for (Cell[] row : gameModel.getMap().getCells()) {
             for (Cell cell : row) {
-                int distance = Math.abs(minerRow - cell.getRow()) + Math.abs(minerCol - cell.getCol());
-                if (distance <= maxDistance || cell.getType() == CellType.SKY) {
+                // Always reveal SKY and SKY_WALKABLE
+                if (cell.getType() == CellType.SKY || cell.getType() == CellType.SKY_WALKABLE) {
                     cell.setRevealed(true);
+                } else {
+                    int distance = Math.abs(minerRow - cell.getRow()) + Math.abs(minerCol - cell.getCol());
+                    if (distance <= maxDistance) {
+                        cell.setRevealed(true);
+                    }
                 }
             }
         }
     }
-    
-    //ublic void render(GameModel model) {
-    //	Map map = model.getMap();
-    //	for y<maze height
-    //		for c x<maze height
-    ///			int c ell x = cellsiez * x
-    //			int cell 
-    //}
-    
+       
 }

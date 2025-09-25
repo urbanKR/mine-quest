@@ -7,13 +7,16 @@ public class GameModel {
     private final Map map;  
     private final Miner miner;
     private boolean gameWon;
+    private final int startRowMiner = 4;
+    private final int startColMiner = 3;
 
-    public GameModel(int rows, int cols, int startRow, int startCol) {
-        this.map = new Map(rows, cols);
-        this.miner = new Miner(startRow, startCol);
+    public GameModel() {
+        this.map = new Map();
+        this.miner = new Miner(startRowMiner, startColMiner);
         this.gameWon = false;
 
-        map.getCells()[startRow][startCol].setHasMiner(true);
+        // Place miner on the map at start
+        map.getCells()[startRowMiner][startColMiner].setHasMiner(true);
     }
 
     public boolean moveMiner(Direction direction) {
@@ -27,14 +30,14 @@ public class GameModel {
             case RIGHT -> newCol++;
         }
 
+        Cell[][] cells = map.getCells();
+
         // bounds check
-        if (newRow < 0 || newRow >= map.getRows() || newCol < 0 || newCol >= map.getCols()) {
+        if (newRow < 0 || newCol < 0 || newRow >= map.getRows() || newCol >= map.getCols()) {
             return false;
         }
 
-        Cell[][] cells = map.getCells();
-
-        // not walkable check
+        // check if target cell is walkable
         if (!cells[newRow][newCol].isWalkable()) {
             return false;
         }
@@ -47,7 +50,6 @@ public class GameModel {
 
         // add miner to new cell
         cells[newRow][newCol].setHasMiner(true);
-
 
         return true;
     }
