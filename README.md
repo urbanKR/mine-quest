@@ -16,8 +16,8 @@ The game features character selection and item upgrades, as well as strategic pa
 ### Core Gameplay 
 
 - [ ] **Grid System & Mining**
-  - [✔] Implement cell class with different block types
-  - [✔] Implement tile-based 2D Map 
+  - [X] Implement cell class with different block types
+  - [X] Implement tile-based 2D Map 
   - [ ] Handle left-click mining mechanics
   - [ ] Block destruction animations and effects
 
