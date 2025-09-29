@@ -35,7 +35,7 @@ The game features character selection and item upgrades, as well as strategic pa
 ### User Interface 
 
 - [ ] Window Management
-  - [ ] Start screen with game introduction
+  - [X] Start screen with game introduction
   - [ ] Character selection window
   - [ ] Level selection interface
   - [ ] Main game window with HUD
@@ -150,8 +150,8 @@ TODO
 
 ## Development Team
 - Clarisse Carvalho
-- Eryk x
-- Krzysztof Urbam
+- Eryk Dziemidzionek
+- Krzysztof Urban
 
 ## License
 
