@@ -2,6 +2,7 @@ package application;
 
 public class Miner {
     private int row, col;
+    private int toolsDamage = 1;
 
     public Miner(int row, int col) {
         this.row = row;
@@ -19,5 +20,9 @@ public class Miner {
     public void moveTo(int newRow, int newCol) {
         this.row = newRow;
         this.col = newCol;
+    }
+    
+    public int getToolsDamage() {
+    	return toolsDamage;
     }
 }

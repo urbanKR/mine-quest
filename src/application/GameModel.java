@@ -9,14 +9,19 @@ public class GameModel {
     private boolean gameWon;
     private final int startRowMiner = 4;
     private final int startColMiner = 3;
+    private int colsNum;
+    private int rowsNum;
 
     public GameModel() {
         this.map = new Map();
         this.miner = new Miner(startRowMiner, startColMiner);
         this.gameWon = false;
 
+        this.rowsNum = map.getRows();
+        this.colsNum = map.getCols();
+        
         // Place miner on the map at start
-        map.getCells()[startRowMiner][startColMiner].setHasMiner(true);
+        map.getCells()[startRowMiner][startColMiner].setHasMiner(true);  
     }
 
     public boolean moveMiner(Direction direction) {
@@ -63,6 +68,7 @@ public class GameModel {
 
         gameWon = false;
     }
+
 
     // getters
     public Map getMap() { return map; }

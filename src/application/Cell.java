@@ -6,36 +6,64 @@ public class Cell extends Button {
 	private int row;
 	private int col;
 	private CellType type;
-
+	private int hardness;
+	private boolean destroyable;
+	
 	private boolean revealed = false;
 	private boolean hasMiner = false;
 	private boolean walkable = true;
 	private boolean goal = false;
+	private boolean destroyed = false;
 
+	
 	public Cell(CellType type) {
 		this.type = type;
 
 		switch (type) {
 		case SKY:
 			walkable = false;
+			hardness = 0;
+			destroyable = false;
 			break;
 		case SKY_WALKABLE:
 			walkable = true;
+			hardness = 0;
+			destroyable = false;
 			break;
 		case GRASS:
-			walkable = true;
+			walkable = false;
+			hardness = 3;
+			destroyable = true;
 			break;
 		case DIRT:
-			walkable = true;
+			walkable = false;
+			hardness = 6;
+			destroyable = true;
 			break;
 		}
-
+		
 		setMinSize(40, 40);
 		setMaxSize(40, 40);
 		setFocusTraversable(false);
 		updateVisual();
+		
+		this.setOnAction(e->mineCell());
 	}
 
+	public void mineCell() {
+		System.out.printf("%d", this.hardness);
+		if (destroyable && !destroyed) {
+			this.hardness -= 1;
+		
+			if (this.hardness <= 0) {
+				walkable = true;
+				destroyed = true;
+				type = CellType.DESTROYED;
+				this.setRevealed(true);
+			}
+		}
+	}
+	
 	// Set position
 	public void setPosition(int row, int col) {
 		this.row = row;
@@ -124,6 +152,9 @@ public class Cell extends Button {
 				break;
 			case DIRT:
 				setStyle("-fx-background-color: #8B4513; -fx-border-color: #5A2E0F; -fx-border-width: 1px;");
+				break;
+			case DESTROYED:
+				setStyle("-fx-background-color: #7a7672; -fx-border-color: #5A2E0F; -fx-border-width: 1px;");
 				break;
 			}
 		}
