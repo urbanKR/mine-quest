@@ -32,6 +32,7 @@ public class Cell extends Button {
 
 		setMinSize(40, 40);
 		setMaxSize(40, 40);
+		setFocusTraversable(false);
 		updateVisual();
 	}
 
