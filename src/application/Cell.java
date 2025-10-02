@@ -8,14 +8,14 @@ public class Cell extends Button {
 	private CellType type;
 	private int hardness;
 	private boolean destroyable;
-	
+
 	private boolean revealed = false;
+	private boolean mineable = false;
 	private boolean hasMiner = false;
 	private boolean walkable = true;
 	private boolean goal = false;
 	private boolean destroyed = false;
 
-	
 	public Cell(CellType type) {
 		this.type = type;
 
@@ -41,20 +41,20 @@ public class Cell extends Button {
 			destroyable = true;
 			break;
 		}
-		
+
 		setMinSize(40, 40);
 		setMaxSize(40, 40);
 		setFocusTraversable(false);
 		updateVisual();
-		
-		this.setOnAction(e->mineCell());
+
+		this.setOnAction(e -> mineCell());
 	}
 
 	public void mineCell() {
 		System.out.printf("%d", this.hardness);
-		if (destroyable && !destroyed) {
+		if (destroyable && !destroyed && this.mineable) {
 			this.hardness -= 1;
-		
+
 			if (this.hardness <= 0) {
 				walkable = true;
 				destroyed = true;
@@ -63,7 +63,7 @@ public class Cell extends Button {
 			}
 		}
 	}
-	
+
 	// Set position
 	public void setPosition(int row, int col) {
 		this.row = row;
@@ -124,6 +124,11 @@ public class Cell extends Button {
 		updateVisual();
 	}
 
+	public void setMineable(boolean mineable) {
+		this.mineable = mineable;
+		updateVisual();
+	}
+
 	// --- Visual representation ---
 	public void updateVisual() {
 		if (hasMiner) {
@@ -173,6 +178,8 @@ public class Cell extends Button {
 			return "#A3E055";
 		case DIRT:
 			return "#8B4513";
+		case DESTROYED:
+			return "#7a7672";
 		default:
 			return "#87CEEB";
 		}
