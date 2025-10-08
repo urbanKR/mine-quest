@@ -13,8 +13,8 @@ public class GameModel {
     private int rowsNum;
 
     public GameModel() {
-        this.map = new Map();
         this.miner = new Miner(startRowMiner, startColMiner);
+        this.map = new Map(miner);
         this.gameWon = false;
 
         this.rowsNum = map.getRows();

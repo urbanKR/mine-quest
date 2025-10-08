@@ -8,6 +8,7 @@ public class Cell extends Button {
 	private CellType type;
 	private int hardness;
 	private boolean destroyable;
+	private Miner miner;
 
 	private boolean revealed = false;
 	private boolean mineable = false;
@@ -16,9 +17,10 @@ public class Cell extends Button {
 	private boolean goal = false;
 	private boolean destroyed = false;
 
-	public Cell(CellType type) {
+	public Cell(CellType type, Miner miner) {
 		this.type = type;
-
+		this.miner = miner;
+		
 		switch (type) {
 		case SKY:
 			walkable = false;
@@ -53,7 +55,7 @@ public class Cell extends Button {
 	public void mineCell() {
 		System.out.printf("%d", this.hardness);
 		if (destroyable && !destroyed && this.mineable) {
-			this.hardness -= 1;
+			this.hardness -= this.miner.getToolsDamage();
 
 			if (this.hardness <= 0) {
 				walkable = true;

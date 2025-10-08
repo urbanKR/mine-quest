@@ -2,7 +2,7 @@ package application;
 
 public class Miner {
     private int row, col;
-    private int toolsDamage = 1;
+    private int toolsDamage = 2;
 
     public Miner(int row, int col) {
         this.row = row;
