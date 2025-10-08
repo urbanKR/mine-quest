@@ -5,7 +5,7 @@ public class Map {
     private final int cols = 20;
     private final Cell[][] cells;
 
-    public Map(Miner miner) {
+    public Map(Miner miner, GameModel model) {
         // 0 = SKY
 		// 1 = SKY_WALKABLE(GROUND)
 		// 2 = GRASS
@@ -39,7 +39,8 @@ public class Map {
                     case 3 -> type = CellType.DIRT;
                     default -> type = CellType.SKY;
                 }
-                cells[i][j] = new Cell(type, miner);
+                cells[i][j] = new Cell(type, miner, this, model);         
+                
                 cells[i][j].setPosition(i, j);
             }
         }

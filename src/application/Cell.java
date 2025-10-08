@@ -9,6 +9,8 @@ public class Cell extends Button {
 	private int hardness;
 	private boolean destroyable;
 	private Miner miner;
+	private Map map;
+	private GameModel model;
 
 	private boolean revealed = false;
 	private boolean mineable = false;
@@ -17,9 +19,11 @@ public class Cell extends Button {
 	private boolean goal = false;
 	private boolean destroyed = false;
 
-	public Cell(CellType type, Miner miner) {
+	public Cell(CellType type, Miner miner, Map map, GameModel model) {
 		this.type = type;
 		this.miner = miner;
+		this.map = map;
+		this.model = model;
 		
 		switch (type) {
 		case SKY:
@@ -58,7 +62,7 @@ public class Cell extends Button {
 			this.hardness -= this.miner.getToolsDamage();
 
 			if (this.hardness <= 0) {
-				walkable = true;
+				setWalkable(true);
 				destroyed = true;
 				type = CellType.DESTROYED;
 				this.setRevealed(true);
@@ -70,6 +74,24 @@ public class Cell extends Button {
 	public void setPosition(int row, int col) {
 		this.row = row;
 		this.col = col;
+		
+		// dragging setup
+		if (walkable) {
+			
+			this.setOnDragDetected(e -> {System.out.printf("%d:%d \n",col, row);
+			if (hasMiner)
+			{
+				((Cell) e.getSource()).startFullDrag();
+				model.clearPath();
+			}
+			});
+			
+			this.setOnMouseDragEntered(e -> {System.out.printf("%d:%d dragging continues \n", col, row);
+											model.addToPath(row,col);
+											});
+			this.setOnMouseDragReleased(e -> {System.out.printf("%d:%d dragging stopped \n", col, row);
+											model.moveAlongPath();});
+		}		
 	}
 
 	public int getRow() {
@@ -114,6 +136,22 @@ public class Cell extends Button {
 
 	public void setWalkable(boolean walkable) {
 		this.walkable = walkable;
+		
+		if(walkable) {
+			this.setOnDragDetected(e -> {System.out.printf("%d:%d \n",col, row);
+			if (hasMiner)
+			{
+				((Cell) e.getSource()).startFullDrag();
+				model.clearPath();
+			}
+			});
+			
+			this.setOnMouseDragEntered(e -> {System.out.printf("%d:%d dragging continues \n", col, row);
+											model.addToPath(row,col);
+											});
+			this.setOnMouseDragReleased(e -> {System.out.printf("%d:%d dragging stopped \n", col, row);
+											model.moveAlongPath();});
+		}
 		updateVisual();
 	}
 

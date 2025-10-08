@@ -14,6 +14,8 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+	MapView view;
+	
 	@Override
 	public void start(Stage stage) {
 		stage.setTitle("Miner's Quest");
@@ -65,9 +67,10 @@ public class Main extends Application {
 		// --- Game model ---
 		GameModel model = new GameModel();
 
+		model.setCallback(() -> updateVisuals());
 		// --- GridPane for map ---
 		GridPane gridPane = new GridPane();
-		MapView view = new MapView(gridPane, model);
+		view = new MapView(gridPane, model);
 
 		// --- Layout ---
 		BorderPane root = new BorderPane();
@@ -86,11 +89,19 @@ public class Main extends Application {
 			view.revealAroundMiner();
 			view.updateView();
 		});
+		
+		gameScene.setOnMouseReleased(event -> {view.revealAroundMiner(); view.updateView();});
 
 		stage.setScene(gameScene);
 		gridPane.requestFocus();
 	}
 
+	private void updateVisuals() {
+		view.revealAroundMiner();
+		view.updateView();
+	}
+	
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
