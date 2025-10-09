@@ -1,9 +1,11 @@
 package application;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -15,7 +17,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
 	MapView view;
-	
+
 	@Override
 	public void start(Stage stage) {
 		stage.setTitle("Miner's Quest");
@@ -72,25 +74,46 @@ public class Main extends Application {
 		GridPane gridPane = new GridPane();
 		view = new MapView(gridPane, model);
 
+		// --- ScrollPane to make map scrollable ---
+		ScrollPane scrollPane = new ScrollPane();
+		scrollPane.setContent(gridPane);
+		scrollPane.setFitToWidth(true);
+		scrollPane.setFitToHeight(false);
+		scrollPane.setPannable(true);
+
+		scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+		scrollPane.setPadding(new Insets(0));
+		scrollPane.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
+
 		// --- Layout ---
 		BorderPane root = new BorderPane();
-		root.setCenter(gridPane);
+		root.setCenter(scrollPane);
 
-		Scene gameScene = new Scene(root, 800, 600);
+		Scene gameScene = new Scene(root, 816, 600);
 
 		// --- Key controls ---
 		gameScene.setOnKeyPressed(event -> {
 			switch (event.getCode()) {
-			case UP -> model.moveMiner(GameModel.Direction.UP);
-			case DOWN -> model.moveMiner(GameModel.Direction.DOWN);
+			case UP -> {
+				model.moveMiner(GameModel.Direction.UP);
+				scrollToMiner(scrollPane, gridPane, model.getMiner());
+			}
+			case DOWN -> {
+				model.moveMiner(GameModel.Direction.DOWN);
+				scrollToMiner(scrollPane, gridPane, model.getMiner());
+			}
 			case LEFT -> model.moveMiner(GameModel.Direction.LEFT);
 			case RIGHT -> model.moveMiner(GameModel.Direction.RIGHT);
 			}
 			view.revealAroundMiner();
 			view.updateView();
 		});
-		
-		gameScene.setOnMouseReleased(event -> {view.revealAroundMiner(); view.updateView();});
+
+		gameScene.setOnMouseReleased(event -> {
+			view.revealAroundMiner();
+			view.updateView();
+		});
 
 		stage.setScene(gameScene);
 		gridPane.requestFocus();
@@ -100,8 +123,21 @@ public class Main extends Application {
 		view.revealAroundMiner();
 		view.updateView();
 	}
-	
-	
+
+	private void scrollToMiner(ScrollPane scrollPane, GridPane gridPane, Miner miner) {
+		double cellHeight = 40;
+		double viewportHeight = scrollPane.getViewportBounds().getHeight();
+		double totalHeight = gridPane.getHeight();
+
+		if (totalHeight > viewportHeight) {
+			double minerY = miner.getRow() * cellHeight;
+			double minerScreenPos = minerY - (viewportHeight * 0.33);
+			double targetVvalue = minerScreenPos / (totalHeight - viewportHeight);
+
+			scrollPane.setVvalue(Math.max(0, Math.min(1, targetVvalue)));
+		}
+	}
+
 	public static void main(String[] args) {
 		launch(args);
 	}
