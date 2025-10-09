@@ -24,7 +24,7 @@ public class Cell extends Button {
 		this.miner = miner;
 		this.map = map;
 		this.model = model;
-		
+
 		switch (type) {
 		case SKY:
 			walkable = false;
@@ -46,6 +46,16 @@ public class Cell extends Button {
 			hardness = 6;
 			destroyable = true;
 			break;
+		case SECRET_KEY:
+			walkable = false;
+			hardness = 10;
+			destroyable = true;
+			break;
+		case FINAL_AREA:
+			walkable = true;
+			hardness = 0;
+			destroyable = false;
+			break;
 		}
 
 		setMinSize(40, 40);
@@ -64,7 +74,14 @@ public class Cell extends Button {
 			if (this.hardness <= 0) {
 				setWalkable(true);
 				destroyed = true;
-				type = CellType.DESTROYED;
+
+				if (type == CellType.SECRET_KEY) {
+					model.collectKey();
+					type = CellType.DESTROYED;
+				} else {
+					type = CellType.DESTROYED;
+				}
+
 				this.setRevealed(true);
 			}
 		}
@@ -74,24 +91,27 @@ public class Cell extends Button {
 	public void setPosition(int row, int col) {
 		this.row = row;
 		this.col = col;
-		
+
 		// dragging setup
 		if (walkable) {
-			
-			this.setOnDragDetected(e -> {System.out.printf("%d:%d \n",col, row);
-			if (hasMiner)
-			{
-				((Cell) e.getSource()).startFullDrag();
-				model.clearPath();
-			}
+
+			this.setOnDragDetected(e -> {
+				System.out.printf("%d:%d \n", col, row);
+				if (hasMiner) {
+					((Cell) e.getSource()).startFullDrag();
+					model.clearPath();
+				}
 			});
-			
-			this.setOnMouseDragEntered(e -> {System.out.printf("%d:%d dragging continues \n", col, row);
-											model.addToPath(row,col);
-											});
-			this.setOnMouseDragReleased(e -> {System.out.printf("%d:%d dragging stopped \n", col, row);
-											model.moveAlongPath();});
-		}		
+
+			this.setOnMouseDragEntered(e -> {
+				System.out.printf("%d:%d dragging continues \n", col, row);
+				model.addToPath(row, col);
+			});
+			this.setOnMouseDragReleased(e -> {
+				System.out.printf("%d:%d dragging stopped \n", col, row);
+				model.moveAlongPath();
+			});
+		}
 	}
 
 	public int getRow() {
@@ -127,6 +147,11 @@ public class Cell extends Button {
 
 	public void setHasMiner(boolean hasMiner) {
 		this.hasMiner = hasMiner;
+
+		if (hasMiner && type == CellType.FINAL_AREA) {
+			model.checkWinCondition();
+		}
+
 		updateVisual();
 	}
 
@@ -136,21 +161,24 @@ public class Cell extends Button {
 
 	public void setWalkable(boolean walkable) {
 		this.walkable = walkable;
-		
-		if(walkable) {
-			this.setOnDragDetected(e -> {System.out.printf("%d:%d \n",col, row);
-			if (hasMiner)
-			{
-				((Cell) e.getSource()).startFullDrag();
-				model.clearPath();
-			}
+
+		if (walkable) {
+			this.setOnDragDetected(e -> {
+				System.out.printf("%d:%d \n", col, row);
+				if (hasMiner) {
+					((Cell) e.getSource()).startFullDrag();
+					model.clearPath();
+				}
 			});
-			
-			this.setOnMouseDragEntered(e -> {System.out.printf("%d:%d dragging continues \n", col, row);
-											model.addToPath(row,col);
-											});
-			this.setOnMouseDragReleased(e -> {System.out.printf("%d:%d dragging stopped \n", col, row);
-											model.moveAlongPath();});
+
+			this.setOnMouseDragEntered(e -> {
+				System.out.printf("%d:%d dragging continues \n", col, row);
+				model.addToPath(row, col);
+			});
+			this.setOnMouseDragReleased(e -> {
+				System.out.printf("%d:%d dragging stopped \n", col, row);
+				model.moveAlongPath();
+			});
 		}
 		updateVisual();
 	}
@@ -201,6 +229,12 @@ public class Cell extends Button {
 			case DESTROYED:
 				setStyle("-fx-background-color: #7a7672; -fx-border-color: #5A2E0F; -fx-border-width: 1px;");
 				break;
+			case SECRET_KEY:
+				setStyle("-fx-background-color: #FFD700; -fx-border-color: #FFA500; -fx-border-width: 2px;");
+				break;
+			case FINAL_AREA:
+				setStyle("-fx-background-color: #90EE90; -fx-border-color: #228B22; -fx-border-width: 2px;");
+				break;
 			}
 		}
 	}
@@ -220,6 +254,10 @@ public class Cell extends Button {
 			return "#8B4513";
 		case DESTROYED:
 			return "#7a7672";
+		case SECRET_KEY:
+			return "#FFD700";
+		case FINAL_AREA:
+			return "#90EE90";
 		default:
 			return "#87CEEB";
 		}

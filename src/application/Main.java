@@ -4,7 +4,9 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -70,6 +72,8 @@ public class Main extends Application {
 		GameModel model = new GameModel();
 
 		model.setCallback(() -> updateVisuals());
+		model.setWinCallback(() -> showWinDialog(stage));
+
 		// --- GridPane for map ---
 		GridPane gridPane = new GridPane();
 		view = new MapView(gridPane, model);
@@ -138,7 +142,23 @@ public class Main extends Application {
 		}
 	}
 
-	public static void main(String[] args) {
-		launch(args);
+	private void showWinDialog(Stage stage) {
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		alert.setTitle("Congratulations!");
+		alert.setHeaderText("YOU WIN!");
+		alert.setContentText("You collected all the secret keys and reached the final area!");
+
+		ButtonType backToMenu = new ButtonType("Back to Menu");
+		ButtonType exitGame = new ButtonType("Exit Game");
+
+		alert.getButtonTypes().setAll(backToMenu, exitGame);
+
+		alert.showAndWait().ifPresent(response -> {
+			if (response == backToMenu) {
+				showMenuScreen(stage);
+			} else if (response == exitGame) {
+				stage.close();
+			}
+		});
 	}
 }
