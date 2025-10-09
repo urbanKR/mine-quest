@@ -16,7 +16,6 @@ public class Cell extends Button {
 	private boolean mineable = false;
 	private boolean hasMiner = false;
 	private boolean walkable = true;
-	private boolean goal = false;
 	private boolean destroyed = false;
 
 	public Cell(CellType type, Miner miner, Map map, GameModel model) {
@@ -26,31 +25,31 @@ public class Cell extends Button {
 		this.model = model;
 
 		switch (type) {
-		case SKY:
-			walkable = false;
-			hardness = 0;
-			destroyable = false;
-			break;
-		case SKY_WALKABLE, FINAL_AREA, FINAL_CHEST:
-			walkable = true;
-			hardness = 0;
-			destroyable = false;
-			break;
-		case GRASS:
-			walkable = false;
-			hardness = 3;
-			destroyable = true;
-			break;
-		case DIRT:
-			walkable = false;
-			hardness = 6;
-			destroyable = true;
-			break;
-		case SECRET_KEY:
-			walkable = false;
-			hardness = 10;
-			destroyable = true;
-			break;
+			case SKY, FINAL_CHEST:
+				walkable = false;
+				hardness = 0;
+				destroyable = false;
+				break;
+			case SKY_WALKABLE, FINAL_AREA:
+				walkable = true;
+				hardness = 0;
+				destroyable = false;
+				break;
+			case GRASS:
+				walkable = false;
+				hardness = 3;
+				destroyable = true;
+				break;
+			case DIRT:
+				walkable = false;
+				hardness = 6;
+				destroyable = true;
+				break;
+			case SECRET_KEY:
+				walkable = false;
+				hardness = 10;
+				destroyable = true;
+				break;
 		}
 
 		setMinSize(40, 40);
@@ -79,6 +78,10 @@ public class Cell extends Button {
 
 				this.setRevealed(true);
 			}
+		}
+
+		if (type == CellType.FINAL_CHEST && this.mineable && model.hasAllKeys()) {
+			model.checkWinCondition();
 		}
 	}
 
@@ -142,11 +145,6 @@ public class Cell extends Button {
 
 	public void setHasMiner(boolean hasMiner) {
 		this.hasMiner = hasMiner;
-
-		if (hasMiner && type == CellType.FINAL_CHEST) {
-			model.checkWinCondition();
-		}
-
 		updateVisual();
 	}
 
@@ -178,15 +176,6 @@ public class Cell extends Button {
 		updateVisual();
 	}
 
-	public boolean isGoal() {
-		return goal;
-	}
-
-	public void setGoal(boolean goal) {
-		this.goal = goal;
-		updateVisual();
-	}
-
 	public void setMineable(boolean mineable) {
 		this.mineable = mineable;
 		updateVisual();
@@ -198,7 +187,8 @@ public class Cell extends Button {
 			String backgroundColor = getBackgroundColorForType();
 
 			setStyle("-fx-background-color: " + backgroundColor + "; "
-					+ "-fx-background-image: url('file:img/miner-version1.png'); " + "-fx-background-size: contain; "
+					+ "-fx-background-image: url('file:img/" + miner.getCharacterImage() + "'); "
+					+ "-fx-background-size: contain; "
 					+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
 					+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
 
@@ -209,27 +199,27 @@ public class Cell extends Button {
 			setStyle("-fx-background-color: #A0A0A0; -fx-border-color: #808080; -fx-border-width: 1px;");
 		} else {
 			switch (type) {
-			case SKY, SKY_WALKABLE:
-				setStyle("-fx-background-color: #87CEEB; -fx-border-color: #87CEEB; -fx-border-width: 1px;");
-				break;
-			case FINAL_CHEST:
-				setStyle("-fx-background-color: #7a6860; -fx-border-color: #413838; -fx-border-width: 1px;");
-				break;
-			case GRASS:
-				setStyle("-fx-background-color: #A3E055; -fx-border-color: #469B11; -fx-border-width: 1px;");
-				break;
-			case DIRT:
-				setStyle("-fx-background-color: #8B4513; -fx-border-color: #5A2E0F; -fx-border-width: 1px;");
-				break;
-			case DESTROYED:
-				setStyle("-fx-background-color: #7a7672; -fx-border-color: #5A2E0F; -fx-border-width: 1px;");
-				break;
-			case SECRET_KEY:
-				setStyle("-fx-background-color: #FFD700; -fx-border-color: #FFA500; -fx-border-width: 2px;");
-				break;
-			case FINAL_AREA:
-				setStyle("-fx-background-color: #90EE90; -fx-border-color: #228B22; -fx-border-width: 2px;");
-				break;
+				case SKY, SKY_WALKABLE:
+					setStyle("-fx-background-color: #87CEEB; -fx-border-color: #87CEEB; -fx-border-width: 1px;");
+					break;
+				case FINAL_CHEST:
+					setStyle("-fx-background-color: #7a6860; -fx-border-color: #413838; -fx-border-width: 1px;");
+					break;
+				case GRASS:
+					setStyle("-fx-background-color: #A3E055; -fx-border-color: #469B11; -fx-border-width: 1px;");
+					break;
+				case DIRT:
+					setStyle("-fx-background-color: #8B4513; -fx-border-color: #5A2E0F; -fx-border-width: 1px;");
+					break;
+				case DESTROYED:
+					setStyle("-fx-background-color: #7a7672; -fx-border-color: #5A2E0F; -fx-border-width: 1px;");
+					break;
+				case SECRET_KEY:
+					setStyle("-fx-background-color: #FFD700; -fx-border-color: #FFA500; -fx-border-width: 2px;");
+					break;
+				case FINAL_AREA:
+					setStyle("-fx-background-color: #90EE90; -fx-border-color: #228B22; -fx-border-width: 2px;");
+					break;
 			}
 		}
 	}
@@ -240,21 +230,21 @@ public class Cell extends Button {
 		}
 
 		switch (type) {
-		case SKY:
-		case SKY_WALKABLE:
-			return "#87CEEB";
-		case GRASS:
-			return "#A3E055";
-		case DIRT:
-			return "#8B4513";
-		case DESTROYED:
-			return "#7a7672";
-		case SECRET_KEY:
-			return "#FFD700";
-		case FINAL_AREA:
-			return "#90EE90";
-		default:
-			return "#87CEEB";
+			case SKY:
+			case SKY_WALKABLE:
+				return "#87CEEB";
+			case GRASS:
+				return "#A3E055";
+			case DIRT:
+				return "#8B4513";
+			case DESTROYED:
+				return "#7a7672";
+			case SECRET_KEY:
+				return "#FFD700";
+			case FINAL_AREA:
+				return "#90EE90";
+			default:
+				return "#87CEEB";
 		}
 	}
 }

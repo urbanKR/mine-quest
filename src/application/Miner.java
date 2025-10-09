@@ -3,10 +3,12 @@ package application;
 public class Miner {
     private int row, col;
     private int toolsDamage = 2;
+    private String characterImage;
 
-    public Miner(int row, int col) {
+    public Miner(int row, int col, String characterImage) {
         this.row = row;
         this.col = col;
+        this.characterImage = characterImage;
     }
 
     public int getRow() { return row; }
@@ -21,8 +23,12 @@ public class Miner {
         this.row = newRow;
         this.col = newCol;
     }
-    
+
     public int getToolsDamage() {
-    	return toolsDamage;
+        return toolsDamage;
+    }
+
+    public String getCharacterImage() {
+        return characterImage;
     }
 }

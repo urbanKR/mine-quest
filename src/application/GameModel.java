@@ -30,8 +30,8 @@ public class GameModel {
 	private int keysCollected = 0;
 	private final int totalKeys = 3;
 
-	public GameModel() {
-		this.miner = new Miner(startRowMiner, startColMiner);
+	public GameModel(String characterImage) {
+		this.miner = new Miner(startRowMiner, startColMiner, characterImage);
 		this.map = new Map(miner, this);
 		this.gameWon = false;
 
@@ -49,10 +49,10 @@ public class GameModel {
 		int newCol = miner.getCol();
 
 		switch (direction) {
-		case UP -> newRow--;
-		case DOWN -> newRow++;
-		case LEFT -> newCol--;
-		case RIGHT -> newCol++;
+			case UP -> newRow--;
+			case DOWN -> newRow++;
+			case LEFT -> newCol--;
+			case RIGHT -> newCol++;
 		}
 
 		Cell[][] cells = map.getCells();

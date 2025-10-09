@@ -19,6 +19,7 @@ import javafx.stage.StageStyle;
 public class Main extends Application {
 
 	MapView view;
+	private String selectedCharacter = "miner-version1.png";
 
 	@Override
 	public void start(Stage stage) {
@@ -57,7 +58,7 @@ public class Main extends Application {
 		quitButton.setOnMouseExited(e -> quitButton
 				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;"));
 
-		startButton.setOnAction(e -> showGameScreen(primaryStage));
+		startButton.setOnAction(e -> showCharacterSelectionScreen(primaryStage));
 		quitButton.setOnAction(e -> primaryStage.close());
 
 		menuLayout.getChildren().addAll(title, startButton, quitButton);
@@ -67,9 +68,102 @@ public class Main extends Application {
 		primaryStage.show();
 	}
 
+	private void showCharacterSelectionScreen(Stage primaryStage) {
+		VBox layout = new VBox(30);
+		layout.setAlignment(Pos.CENTER);
+		layout.setStyle("-fx-background-color: #F0F0F0;");
+
+		Text title = new Text("Select Your Character");
+		title.setFont(Font.font("Arial", FontWeight.BOLD, 42));
+
+		HBox characterBox = new HBox(40);
+		characterBox.setAlignment(Pos.CENTER);
+
+		Button leftArrow = new Button("◄");
+		leftArrow.setFont(Font.font("Arial", FontWeight.BOLD, 36));
+		leftArrow.setMinSize(80, 80);
+		leftArrow.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;");
+
+		Button characterPreview = new Button();
+		characterPreview.setMinSize(150, 150);
+		characterPreview.setMaxSize(150, 150);
+		characterPreview.setFocusTraversable(false);
+		characterPreview.setStyle(
+				"-fx-background-color: #87CEEB; " +
+						"-fx-background-image: url('file:img/" + selectedCharacter + "'); " +
+						"-fx-background-size: contain; " +
+						"-fx-background-repeat: no-repeat; " +
+						"-fx-background-position: center; " +
+						"-fx-border-color: black; " +
+						"-fx-border-width: 3px;"
+		);
+
+		Button rightArrow = new Button("►");
+		rightArrow.setFont(Font.font("Arial", FontWeight.BOLD, 36));
+		rightArrow.setMinSize(80, 80);
+		rightArrow.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;");
+		Text characterName = new Text("MINER");
+		characterName.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+		final String[] characters = {"miner-version1.png", "miner-version2.png", "miner-version3.png"};
+		final int[] currentIndex = {0};
+
+		Runnable updateCharacter = () -> {
+			selectedCharacter = characters[currentIndex[0]];
+			characterPreview.setStyle(
+					"-fx-background-color: #87CEEB; " +
+							"-fx-background-image: url('file:img/" + selectedCharacter + "'); " +
+							"-fx-background-size: contain; " +
+							"-fx-background-repeat: no-repeat; " +
+							"-fx-background-position: center; " +
+							"-fx-border-color: black; " +
+							"-fx-border-width: 3px;"
+			);
+		};
+
+		leftArrow.setOnAction(e -> {
+			currentIndex[0] = (currentIndex[0] - 1 + characters.length) % characters.length;
+			updateCharacter.run();
+		});
+
+		rightArrow.setOnAction(e -> {
+			currentIndex[0] = (currentIndex[0] + 1) % characters.length;
+			updateCharacter.run();
+		});
+
+		leftArrow.setOnMouseEntered(e -> leftArrow
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 3px;"));
+		leftArrow.setOnMouseExited(e -> leftArrow
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;"));
+
+		rightArrow.setOnMouseEntered(e -> rightArrow
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 3px;"));
+		rightArrow.setOnMouseExited(e -> rightArrow
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;"));
+
+		characterBox.getChildren().addAll(leftArrow, characterPreview, rightArrow);
+
+		Button nextButton = new Button("NEXT");
+		nextButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+		nextButton.setMinWidth(200);
+		nextButton.setMinHeight(50);
+		nextButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;");
+
+		nextButton.setOnMouseEntered(e -> nextButton
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 3px;"));
+		nextButton.setOnMouseExited(e -> nextButton
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;"));
+
+		nextButton.setOnAction(e -> showGameScreen(primaryStage));
+
+		layout.getChildren().addAll(title, characterBox, characterName, nextButton);
+
+		Scene characterScene = new Scene(layout, 800, 600);
+		primaryStage.setScene(characterScene);
+	}
+
 	private void showGameScreen(Stage stage) {
 		// --- Game model ---
-		GameModel model = new GameModel();
+		GameModel model = new GameModel(selectedCharacter);
 
 		model.setCallback(() -> updateVisuals());
 		model.setWinCallback(() -> showWinDialog(stage));
@@ -99,16 +193,16 @@ public class Main extends Application {
 		// --- Key controls ---
 		gameScene.setOnKeyPressed(event -> {
 			switch (event.getCode()) {
-			case UP -> {
-				model.moveMiner(GameModel.Direction.UP);
-				scrollToMiner(scrollPane, gridPane, model.getMiner());
-			}
-			case DOWN -> {
-				model.moveMiner(GameModel.Direction.DOWN);
-				scrollToMiner(scrollPane, gridPane, model.getMiner());
-			}
-			case LEFT -> model.moveMiner(GameModel.Direction.LEFT);
-			case RIGHT -> model.moveMiner(GameModel.Direction.RIGHT);
+				case UP -> {
+					model.moveMiner(GameModel.Direction.UP);
+					scrollToMiner(scrollPane, gridPane, model.getMiner());
+				}
+				case DOWN -> {
+					model.moveMiner(GameModel.Direction.DOWN);
+					scrollToMiner(scrollPane, gridPane, model.getMiner());
+				}
+				case LEFT -> model.moveMiner(GameModel.Direction.LEFT);
+				case RIGHT -> model.moveMiner(GameModel.Direction.RIGHT);
 			}
 			view.revealAroundMiner();
 			view.updateView();
