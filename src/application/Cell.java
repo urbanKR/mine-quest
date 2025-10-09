@@ -31,7 +31,7 @@ public class Cell extends Button {
 			hardness = 0;
 			destroyable = false;
 			break;
-		case SKY_WALKABLE:
+		case SKY_WALKABLE, FINAL_AREA, FINAL_CHEST:
 			walkable = true;
 			hardness = 0;
 			destroyable = false;
@@ -50,11 +50,6 @@ public class Cell extends Button {
 			walkable = false;
 			hardness = 10;
 			destroyable = true;
-			break;
-		case FINAL_AREA:
-			walkable = true;
-			hardness = 0;
-			destroyable = false;
 			break;
 		}
 
@@ -148,7 +143,7 @@ public class Cell extends Button {
 	public void setHasMiner(boolean hasMiner) {
 		this.hasMiner = hasMiner;
 
-		if (hasMiner && type == CellType.FINAL_AREA) {
+		if (hasMiner && type == CellType.FINAL_CHEST) {
 			model.checkWinCondition();
 		}
 
@@ -197,7 +192,7 @@ public class Cell extends Button {
 		updateVisual();
 	}
 
-	// --- Visual representation ---
+	/** @noinspection CssUnknownTarget*/ // --- Visual representation ---
 	public void updateVisual() {
 		if (hasMiner) {
 			String backgroundColor = getBackgroundColorForType();
@@ -214,11 +209,11 @@ public class Cell extends Button {
 			setStyle("-fx-background-color: #A0A0A0; -fx-border-color: #808080; -fx-border-width: 1px;");
 		} else {
 			switch (type) {
-			case SKY:
+			case SKY, SKY_WALKABLE:
 				setStyle("-fx-background-color: #87CEEB; -fx-border-color: #87CEEB; -fx-border-width: 1px;");
 				break;
-			case SKY_WALKABLE:
-				setStyle("-fx-background-color: #87CEEB; -fx-border-color: #87CEEB; -fx-border-width: 1px;");
+			case FINAL_CHEST:
+				setStyle("-fx-background-color: #7a6860; -fx-border-color: #413838; -fx-border-width: 1px;");
 				break;
 			case GRASS:
 				setStyle("-fx-background-color: #A3E055; -fx-border-color: #469B11; -fx-border-width: 1px;");

@@ -4,17 +4,17 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class Main extends Application {
 
@@ -143,22 +143,63 @@ public class Main extends Application {
 	}
 
 	private void showWinDialog(Stage stage) {
-		Alert alert = new Alert(Alert.AlertType.INFORMATION);
-		alert.setTitle("Congratulations!");
-		alert.setHeaderText("YOU WIN!");
-		alert.setContentText("You collected all the secret keys and reached the final area!");
+		Dialog<ButtonType> dialog = new Dialog<>();
+		dialog.setTitle("Congratulations!");
+		dialog.initStyle(StageStyle.UNDECORATED);
+		dialog.getDialogPane().getButtonTypes().clear();
 
-		ButtonType backToMenu = new ButtonType("Back to Menu");
-		ButtonType exitGame = new ButtonType("Exit Game");
+		VBox dialogLayout = new VBox(20);
+		dialogLayout.setAlignment(Pos.CENTER);
+		dialogLayout.setStyle("-fx-background-color: #F0F0F0; -fx-padding: 30;");
+		dialog.getDialogPane().getScene().getRoot().setStyle("-fx-border-color: black; -fx-border-width: 3px;");
 
-		alert.getButtonTypes().setAll(backToMenu, exitGame);
+		Text title = new Text("YOU WIN!");
+		title.setFont(Font.font("Arial", FontWeight.BOLD, 36));
 
-		alert.showAndWait().ifPresent(response -> {
-			if (response == backToMenu) {
-				showMenuScreen(stage);
-			} else if (response == exitGame) {
-				stage.close();
-			}
+		Text message = new Text("You collected all the secret keys\nand reached the final chest!");
+		message.setFont(Font.font("Arial", 18));
+		message.setTextAlignment(TextAlignment.CENTER);
+
+		HBox buttonBox = new HBox(20);
+		buttonBox.setAlignment(Pos.CENTER);
+
+		Button backToMenuButton = new Button("Back to Menu");
+		backToMenuButton.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+		backToMenuButton.setMinWidth(150);
+		backToMenuButton.setMinHeight(40);
+		backToMenuButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;");
+
+		Button exitGameButton = new Button("Exit Game");
+		exitGameButton.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+		exitGameButton.setMinWidth(150);
+		exitGameButton.setMinHeight(40);
+		exitGameButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;");
+
+		backToMenuButton.setOnMouseEntered(e -> backToMenuButton
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 3px;"));
+		backToMenuButton.setOnMouseExited(e -> backToMenuButton
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;"));
+
+		exitGameButton.setOnMouseEntered(e -> exitGameButton
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 3px;"));
+		exitGameButton.setOnMouseExited(e -> exitGameButton
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;"));
+
+		buttonBox.getChildren().addAll(backToMenuButton, exitGameButton);
+		dialogLayout.getChildren().addAll(title, message, buttonBox);
+
+		dialog.getDialogPane().setContent(dialogLayout);
+
+		backToMenuButton.setOnAction(e -> {
+			dialog.setResult(ButtonType.CLOSE);
+			showMenuScreen(stage);
 		});
+
+		exitGameButton.setOnAction(e -> {
+			dialog.setResult(ButtonType.CLOSE);
+			stage.close();
+		});
+
+		dialog.showAndWait();
 	}
 }
