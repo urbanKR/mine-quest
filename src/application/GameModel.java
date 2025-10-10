@@ -18,6 +18,7 @@ public class GameModel {
 
 	private Runnable callback;
 	private Runnable winCallback;
+	private Runnable goldCallback;
 
 	private boolean gameWon;
 	private final int startRowMiner = 4;
@@ -168,6 +169,8 @@ public class GameModel {
 		this.winCallback = winCallback;
 	}
 
+	public void setGoldCallback(Runnable goldCallback) { this.goldCallback = goldCallback; }
+
 	// getters
 	public Map getMap() {
 		return map;
@@ -187,5 +190,10 @@ public class GameModel {
 
 	public int getTotalKeys() {
 		return totalKeys;
+	}
+	public void notifyGoldChanged() {
+		if (goldCallback != null) {
+			goldCallback.run();
+		}
 	}
 }

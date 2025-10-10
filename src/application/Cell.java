@@ -17,6 +17,7 @@ public class Cell extends Button {
 	private boolean hasMiner = false;
 	private boolean walkable = true;
 	private boolean destroyed = false;
+	private int goldValue = 0;
 
 	public Cell(CellType type, Miner miner, Map map, GameModel model) {
 		this.type = type;
@@ -37,13 +38,14 @@ public class Cell extends Button {
 				break;
 			case GRASS:
 				walkable = false;
-				hardness = 3;
+				hardness = 1;
 				destroyable = true;
 				break;
 			case DIRT:
 				walkable = false;
-				hardness = 6;
+				hardness = 5;
 				destroyable = true;
+				goldValue = 1;
 				break;
 			case SECRET_KEY:
 				walkable = false;
@@ -69,13 +71,16 @@ public class Cell extends Button {
 				setWalkable(true);
 				destroyed = true;
 
-				if (type == CellType.SECRET_KEY) {
-					model.collectKey();
-					type = CellType.DESTROYED;
-				} else {
-					type = CellType.DESTROYED;
+				if(this.goldValue != 0) {
+					this.miner.addGold(this.goldValue);
+					model.notifyGoldChanged();
 				}
 
+				if (type == CellType.SECRET_KEY) {
+					model.collectKey();
+				}
+
+				type = CellType.DESTROYED;
 				this.setRevealed(true);
 			}
 		}

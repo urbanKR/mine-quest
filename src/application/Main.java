@@ -5,10 +5,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -184,9 +182,41 @@ public class Main extends Application {
 		scrollPane.setPadding(new Insets(0));
 		scrollPane.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
 
+		// --- Gold Display ---
+		HBox goldDisplay = new HBox(10);
+		goldDisplay.setAlignment(Pos.CENTER_LEFT);
+		goldDisplay.setStyle("-fx-background-color: transparent; -fx-padding: 10;");
+		goldDisplay.setMouseTransparent(true);
+
+		Label coinIcon = new Label();
+		coinIcon.setStyle("-fx-background-image: url('file:img/gold-indicator.png'); " +
+				"-fx-background-size: contain; " +
+				"-fx-background-repeat: no-repeat; " +
+				"-fx-background-position: center; " +
+				"-fx-min-width: 30; " +
+				"-fx-min-height: 30; " +
+				"-fx-pref-width: 30; " +
+				"-fx-pref-height: 30;");
+		Label goldText = new Label("0");
+		goldText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+		goldText.setTextFill(Color.BLACK);
+		goldDisplay.getChildren().addAll(coinIcon, goldText);
+
+		model.setGoldCallback(() -> {
+			goldText.setText(String.valueOf(model.getMiner().getGoldAmount()));
+		});
+
+
+
 		// --- Layout ---
+		StackPane overlayPane = new StackPane();
+		overlayPane.getChildren().add(scrollPane);
+		overlayPane.getChildren().add(goldDisplay);
+		StackPane.setAlignment(goldDisplay, Pos.TOP_LEFT);
+		StackPane.setMargin(goldDisplay, new Insets(0, 0, 600, 0));
+
 		BorderPane root = new BorderPane();
-		root.setCenter(scrollPane);
+		root.setCenter(overlayPane);
 
 		Scene gameScene = new Scene(root, 816, 600);
 
