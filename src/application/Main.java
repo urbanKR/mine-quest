@@ -277,7 +277,7 @@ public class Main extends Application {
 		dialogLayout.setStyle("-fx-background-color: #F0F0F0; -fx-padding: 30;");
 		dialog.getDialogPane().getScene().getRoot().setStyle("-fx-border-color: black; -fx-border-width: 3px;");
 
-		Text title = new Text("YOU WIN!");
+		Text title = new Text("YOU WON!");
 		title.setFont(Font.font("Arial", FontWeight.BOLD, 36));
 
 		Text message = new Text("You collected all the secret keys\nand reached the final chest!");
