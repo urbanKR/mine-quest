@@ -4,7 +4,6 @@ public class Map {
 	private final int rows = 30;
 	private final int cols = 20;
 	private final Cell[][] cells;
-
 	public Map(Miner miner, GameModel model) {
 		// 0 = SKY
 		// 1 = SKY_WALKABLE(GROUND)
@@ -13,11 +12,12 @@ public class Map {
 		// 4 = SECRET_KEY
 		// 5 = FINAL_AREA
 		// 6 = FINAL_CHEST
+		// 7 = SHOP
 		int[][] layout = { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 				{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-				{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+				{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 7 },
 				{ 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 2, 2, 2, 2, 2, 2, 2, 2, 2 }, // all secret keys - to debug
 				{ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
 				{ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 },
@@ -56,6 +56,7 @@ public class Map {
 				case 4 -> type = CellType.SECRET_KEY;
 				case 5 -> type = CellType.FINAL_AREA;
 				case 6 -> type = CellType.FINAL_CHEST;
+				case 7 -> type = CellType.SHOP;
 				default -> type = CellType.SKY;
 				}
 				cells[i][j] = new Cell(type, miner, this, model);

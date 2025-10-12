@@ -3,6 +3,7 @@ package application;
 public class Miner {
     private int row, col;
     private int toolsDamage = 1;
+    private int pickaxeLevel = 0;
     private String characterImage;
     private int goldAmount = 0;
 
@@ -29,6 +30,15 @@ public class Miner {
         return toolsDamage;
     }
 
+    public void setToolsDamage(int damage) {
+        this.toolsDamage = damage;
+    }
+    public int getPickaxeLevel() {
+        return pickaxeLevel;
+    }
+    public void setPickaxeLevel(int level) {
+        this.pickaxeLevel = level;
+    }
     public String getCharacterImage() {
         return characterImage;
     }

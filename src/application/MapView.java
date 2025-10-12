@@ -40,8 +40,8 @@ public class MapView {
 
 		for (Cell[] row : gameModel.getMap().getCells()) {
 			for (Cell cell : row) {
-				// Always reveal SKY and GROUND
-				if (cell.getType() == CellType.SKY || cell.getType() == CellType.SKY_WALKABLE) {
+				if (cell.getType() == CellType.SKY || cell.getType() == CellType.SKY_WALKABLE ||
+						cell.getType() == CellType.SHOP) {
 					cell.setRevealed(true);
 				} else {
 					int distance = Math.abs(minerRow - cell.getRow()) + Math.abs(minerCol - cell.getCol());

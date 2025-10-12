@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import javafx.animation.PauseTransition;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class GameModel {
@@ -15,10 +16,11 @@ public class GameModel {
 
 	private final Map map;
 	private final Miner miner;
-
+	private Stage gameStage;
 	private Runnable callback;
 	private Runnable winCallback;
 	private Runnable goldCallback;
+	private Runnable shopCallback;
 
 	private boolean gameWon;
 	private final int startRowMiner = 4;
@@ -160,6 +162,16 @@ public class GameModel {
 		}
 	}
 
+	public void setGameStage(Stage stage) {
+		this.gameStage = stage;
+	}
+
+	public void openShop() {
+		if (shopCallback != null) {
+			shopCallback.run();
+		}
+	}
+
 	// Callbacks
 	public void setCallback(Runnable callback) {
 		this.callback = callback;
@@ -170,6 +182,9 @@ public class GameModel {
 	}
 
 	public void setGoldCallback(Runnable goldCallback) { this.goldCallback = goldCallback; }
+	public void setShopCallback(Runnable shopCallback) {
+		this.shopCallback = shopCallback;
+	}
 
 	// getters
 	public Map getMap() {

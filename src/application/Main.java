@@ -162,9 +162,11 @@ public class Main extends Application {
 	private void showGameScreen(Stage stage) {
 		// --- Game model ---
 		GameModel model = new GameModel(selectedCharacter);
+		model.setGameStage(stage);
 
 		model.setCallback(() -> updateVisuals());
 		model.setWinCallback(() -> showWinDialog(stage));
+		model.setShopCallback(() -> showShopDialog(stage, model));
 
 		// --- GridPane for map ---
 		GridPane gridPane = new GridPane();
@@ -206,8 +208,6 @@ public class Main extends Application {
 			goldText.setText(String.valueOf(model.getMiner().getGoldAmount()));
 		});
 
-
-
 		// --- Layout ---
 		StackPane overlayPane = new StackPane();
 		overlayPane.getChildren().add(scrollPane);
@@ -218,7 +218,7 @@ public class Main extends Application {
 		BorderPane root = new BorderPane();
 		root.setCenter(overlayPane);
 
-		Scene gameScene = new Scene(root, 816, 600);
+		Scene gameScene = new Scene(root, 816, 650);
 
 		// --- Key controls ---
 		gameScene.setOnKeyPressed(event -> {
@@ -324,6 +324,112 @@ public class Main extends Application {
 			stage.close();
 		});
 
+		dialog.showAndWait();
+	}
+
+	private void showShopDialog(Stage stage, GameModel model) {
+		Dialog<ButtonType> dialog = new Dialog<>();
+		dialog.setTitle("Shop");
+		dialog.initStyle(StageStyle.UNDECORATED);
+		dialog.getDialogPane().getButtonTypes().clear();
+
+		VBox dialogLayout = new VBox(15);
+		dialogLayout.setAlignment(Pos.TOP_CENTER);
+		dialog.getDialogPane().getScene().getRoot().setStyle("-fx-min-width: 300px;  -fx-border-color: black; -fx-border-width: 3px; -fx-background-color: #F5DEB3; -fx-padding: 20;");
+
+		Text title = new Text("SHOP");
+		title.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+
+		VBox pickaxeSection = new VBox(10);
+		pickaxeSection.setStyle("-fx-border-color: black; -fx-border-width: 2px; -fx-padding: 15;");
+
+		Text pickaxeTitle = new Text("PICKAXE UPGRADE");
+		pickaxeTitle.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+
+		Miner miner = model.getMiner();
+
+		final Text levelText = new Text("Current Level: " + (miner.getPickaxeLevel() + 1));
+		levelText.setFont(Font.font("Arial", 14));
+
+		final Text damageText = new Text("Current Damage: " + miner.getToolsDamage());
+		damageText.setFont(Font.font("Arial", 14));
+
+		final Text costText = new Text();
+		costText.setFont(Font.font("Arial", 14));
+
+		final Button buyButton = new Button("BUY");
+		buyButton.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+		buyButton.setMinWidth(100);
+		buyButton.setMinHeight(35);
+
+		Runnable updateDialogState = () -> {
+			levelText.setText("Current Level: " + (miner.getPickaxeLevel() + 1));
+			damageText.setText("Current Damage: " + miner.getToolsDamage());
+
+			if (Shop.isMaxPickaxeLevel(miner)) {
+				costText.setText("MAX LEVEL REACHED");
+				costText.setFill(Color.RED);
+				buyButton.setDisable(true);
+				buyButton.setStyle("-fx-background-color: #CCCCCC; -fx-border-color: black; -fx-border-width: 2px;");
+			} else {
+				int nextCost = Shop.getNextPickaxeCost(miner);
+				int nextDamage = Shop.getNextPickaxeDamage(miner);
+				costText.setText("Next Level: " + (miner.getPickaxeLevel() + 2) +
+						" | Damage: " + nextDamage + " | Cost: " + nextCost);
+				costText.setFill(Color.BLACK);
+				buyButton.setDisable(false);
+				buyButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2px;");
+			}
+		};
+
+		updateDialogState.run();
+
+		buyButton.setOnMouseEntered(e -> {
+			if (!buyButton.isDisabled()) {
+				buyButton.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 2px;");
+			}
+		});
+
+		buyButton.setOnMouseExited(e -> {
+			if (!buyButton.isDisabled()) {
+				buyButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2px;");
+			}
+		});
+
+		buyButton.setOnAction(e -> {
+			if (Shop.buyPickaxeUpgrade(miner, model)) {
+				updateDialogState.run();
+			} else {
+				Alert alert = new Alert(Alert.AlertType.WARNING);
+				alert.setTitle("Insufficient Gold");
+				alert.setHeaderText("Cannot Buy Upgrade");
+				alert.setContentText("You don't have enough gold for this upgrade!");
+				alert.showAndWait();
+			}
+		});
+
+		pickaxeSection.getChildren().addAll(pickaxeTitle, levelText, damageText, costText, buyButton);
+
+		Button closeButton = new Button("✕");
+		closeButton.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+		closeButton.setMinWidth(40);
+		closeButton.setMinHeight(40);
+		closeButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2px;");
+
+		closeButton.setOnMouseEntered(e -> closeButton
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 2px;"));
+		closeButton.setOnMouseExited(e -> closeButton
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2px;"));
+
+		closeButton.setOnAction(e -> dialog.setResult(ButtonType.CLOSE));
+
+		HBox topBar = new HBox();
+		topBar.setAlignment(Pos.TOP_RIGHT);
+		topBar.getChildren().add(closeButton);
+
+		dialogLayout.getChildren().addAll(topBar, title, pickaxeSection);
+
+		dialog.getDialogPane().setContent(dialogLayout);
 		dialog.showAndWait();
 	}
 }

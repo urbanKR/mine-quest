@@ -31,7 +31,7 @@ public class Cell extends Button {
 				hardness = 0;
 				destroyable = false;
 				break;
-			case SKY_WALKABLE, FINAL_AREA:
+			case SKY_WALKABLE, FINAL_AREA, SHOP:
 				walkable = true;
 				hardness = 0;
 				destroyable = false;
@@ -45,7 +45,7 @@ public class Cell extends Button {
 				walkable = false;
 				hardness = 5;
 				destroyable = true;
-				goldValue = 1;
+				goldValue = 20;
 				break;
 			case SECRET_KEY:
 				walkable = false;
@@ -59,7 +59,13 @@ public class Cell extends Button {
 		setFocusTraversable(false);
 		updateVisual();
 
-		this.setOnAction(e -> mineCell());
+		this.setOnAction(e -> {
+			if (type == CellType.SHOP && hasMiner) {
+				interactWithShop(model);
+			} else {
+				mineCell();
+			}
+		});
 	}
 
 	public void mineCell() {
@@ -186,6 +192,12 @@ public class Cell extends Button {
 		updateVisual();
 	}
 
+	public void interactWithShop(GameModel model) {
+		if (type == CellType.SHOP) {
+			model.openShop();
+		}
+	}
+
 	/** @noinspection CssUnknownTarget*/ // --- Visual representation ---
 	public void updateVisual() {
 		if (hasMiner) {
@@ -225,6 +237,15 @@ public class Cell extends Button {
 				case FINAL_AREA:
 					setStyle("-fx-background-color: #90EE90; -fx-border-color: #228B22; -fx-border-width: 2px;");
 					break;
+				case SHOP:
+					setStyle("-fx-background-image: url('file:img/shop.png'); " +
+							"-fx-background-size: 120%; " +
+							"-fx-background-repeat: no-repeat; " +
+							"-fx-background-position: center; " +
+							"-fx-background-color: transparent; " +
+							"-fx-border-color: transparent; " +
+							"-fx-border-width: 0px;");
+					break;
 			}
 		}
 	}
@@ -248,6 +269,8 @@ public class Cell extends Button {
 				return "#FFD700";
 			case FINAL_AREA:
 				return "#90EE90";
+			case SHOP:
+				return "transparent";
 			default:
 				return "#87CEEB";
 		}
