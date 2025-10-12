@@ -43,14 +43,44 @@ public class Cell extends Button {
 				break;
 			case DIRT:
 				walkable = false;
-				hardness = 5;
+				hardness = 2;
 				destroyable = true;
-				goldValue = 20;
+				goldValue = 0;
 				break;
 			case SECRET_KEY:
 				walkable = false;
 				hardness = 10;
 				destroyable = true;
+				break;
+			case GRAVEL:
+				walkable = false;
+				hardness = 5;
+				destroyable = true;
+				goldValue = 1;
+				break;
+			case STONE:
+				walkable = false;
+				hardness = 10;
+				destroyable = true;
+				goldValue = 2;
+				break;
+			case COAL:
+				walkable = false;
+				hardness = 10;
+				destroyable = true;
+				goldValue = 5;
+				break;
+			case IRON:
+				walkable = false;
+				hardness = 20;
+				destroyable = true;
+				goldValue = 10;
+				break;
+			case GOLD:
+				walkable = false;
+				hardness = 20;
+				destroyable = true;
+				goldValue = 20;
 				break;
 		}
 
@@ -220,22 +250,67 @@ public class Cell extends Button {
 					setStyle("-fx-background-color: #87CEEB; -fx-border-color: #87CEEB; -fx-border-width: 1px;");
 					break;
 				case FINAL_CHEST:
-					setStyle("-fx-background-color: #7a6860; -fx-border-color: #413838; -fx-border-width: 1px;");
+					setStyle("-fx-background-image: url('file:img/chest.png'); "
+							+ "-fx-background-size: contain; "
+							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
+							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
 					break;
 				case GRASS:
-					setStyle("-fx-background-color: #A3E055; -fx-border-color: #469B11; -fx-border-width: 1px;");
+					setStyle("-fx-background-image: url('file:img/dirt-grass.png'); "
+							+ "-fx-background-size: contain; "
+							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
+							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
 					break;
 				case DIRT:
-					setStyle("-fx-background-color: #8B4513; -fx-border-color: #5A2E0F; -fx-border-width: 1px;");
+					setStyle("-fx-background-image: url('file:img/dirt.png'); "
+							+ "-fx-background-size: contain; "
+							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
+							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
+					break;
+				case GRAVEL:
+					setStyle("-fx-background-image: url('file:img/gravel.png'); "
+							+ "-fx-background-size: contain; "
+							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
+							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
+					break;
+				case STONE:
+					setStyle("-fx-background-image: url('file:img/stone.png'); "
+							+ "-fx-background-size: contain; "
+							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
+							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
+					break;
+				case COAL:
+					setStyle("-fx-background-image: url('file:img/coal.png'); "
+							+ "-fx-background-size: contain; "
+							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
+							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
+					break;
+				case IRON:
+					setStyle("-fx-background-image: url('file:img/iron.png'); "
+							+ "-fx-background-size: contain; "
+							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
+							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
+					break;
+				case GOLD:
+					setStyle("-fx-background-image: url('file:img/gold.png'); "
+							+ "-fx-background-size: contain; "
+							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
+							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
 					break;
 				case DESTROYED:
 					setStyle("-fx-background-color: #7a7672; -fx-border-color: #5A2E0F; -fx-border-width: 1px;");
 					break;
 				case SECRET_KEY:
-					setStyle("-fx-background-color: #FFD700; -fx-border-color: #FFA500; -fx-border-width: 2px;");
+					setStyle("-fx-background-image: url('file:img/key-block.png'); "
+							+ "-fx-background-size: contain; "
+							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
+							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
 					break;
 				case FINAL_AREA:
-					setStyle("-fx-background-color: #90EE90; -fx-border-color: #228B22; -fx-border-width: 2px;");
+					setStyle("-fx-background-image: url('file:img/final-area-block.png'); "
+							+ "-fx-background-size: contain; "
+							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
+							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
 					break;
 				case SHOP:
 					setStyle("-fx-background-image: url('file:img/shop.png'); " +
@@ -255,24 +330,14 @@ public class Cell extends Button {
 			return "#A0A0A0";
 		}
 
-		switch (type) {
-			case SKY:
-			case SKY_WALKABLE:
-				return "#87CEEB";
-			case GRASS:
-				return "#A3E055";
-			case DIRT:
-				return "#8B4513";
-			case DESTROYED:
-				return "#7a7672";
-			case SECRET_KEY:
-				return "#FFD700";
-			case FINAL_AREA:
-				return "#90EE90";
-			case SHOP:
-				return "transparent";
-			default:
-				return "#87CEEB";
-		}
+        return switch (type) {
+            case GRASS -> "#A3E055";
+            case DIRT -> "#8B4513";
+            case DESTROYED -> "#7a7672";
+            case SECRET_KEY -> "#FFD700";
+            case FINAL_AREA -> "#386251";
+            case SHOP -> "transparent";
+            default -> "#87CEEB";
+        };
 	}
 }
