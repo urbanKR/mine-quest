@@ -410,7 +410,8 @@ public class Main extends Application {
 		root.setCenter(overlayPane);
 
 		Scene gameScene = new Scene(root, 816, 650);
-
+		gameScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+		
 		// --- Key controls ---
 		gameScene.setOnKeyPressed(event -> {
 			switch (event.getCode()) {
