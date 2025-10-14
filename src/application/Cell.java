@@ -27,6 +27,8 @@ public class Cell extends Button {
 		this.miner = miner;
 		this.map = map;
 		this.model = model;
+		
+		
 
 		switch (type) {
 			case SKY, FINAL_CHEST:
@@ -148,6 +150,7 @@ public class Cell extends Button {
 			this.setOnMouseDragEntered(e -> {
 				System.out.printf("%d:%d dragging continues \n", col, row);
 				model.addToPath(row, col);
+				this.getStyleClass().add("marked");
 			});
 			this.setOnMouseDragReleased(e -> {
 				System.out.printf("%d:%d dragging stopped \n", col, row);
@@ -189,6 +192,7 @@ public class Cell extends Button {
 
 	public void setHasMiner(boolean hasMiner) {
 		this.hasMiner = hasMiner;
+		this.getStyleClass().remove("marked");
 		updateVisual();
 	}
 
@@ -210,6 +214,7 @@ public class Cell extends Button {
 
 			this.setOnMouseDragEntered(e -> {
 				System.out.printf("%d:%d dragging continues \n", col, row);
+				this.getStyleClass().add("marked");
 				model.addToPath(row, col);
 			});
 			this.setOnMouseDragReleased(e -> {
