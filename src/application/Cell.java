@@ -4,6 +4,7 @@ import javafx.scene.Cursor;
 import javafx.scene.ImageCursor;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseDragEvent;
 
 public class Cell extends Button {
 	private int row;
@@ -27,8 +28,7 @@ public class Cell extends Button {
 		this.miner = miner;
 		this.map = map;
 		this.model = model;
-		
-		
+
 
 		switch (type) {
 			case SKY, FINAL_CHEST:
@@ -92,6 +92,12 @@ public class Cell extends Button {
 		setMinSize(40, 40);
 		setMaxSize(40, 40);
 		setFocusTraversable(false);
+		this.addEventFilter(MouseDragEvent.MOUSE_DRAG_ENTERED, e -> {
+			if (!walkable) {
+				model.moveAlongPath();
+				e.consume();
+			}
+		});
 		updateVisual();
 
 		this.setOnAction(e -> {
@@ -135,6 +141,10 @@ public class Cell extends Button {
 	public void setPosition(int row, int col) {
 		this.row = row;
 		this.col = col;
+
+		this.setOnDragDetected(null);
+		this.setOnMouseDragEntered(null);
+		this.setOnMouseDragReleased(null);
 
 		// dragging setup
 		if (walkable) {
@@ -202,26 +212,7 @@ public class Cell extends Button {
 
 	public void setWalkable(boolean walkable) {
 		this.walkable = walkable;
-
-		if (walkable) {
-			this.setOnDragDetected(e -> {
-				System.out.printf("%d:%d \n", col, row);
-				if (hasMiner) {
-					((Cell) e.getSource()).startFullDrag();
-					model.clearPath();
-				}
-			});
-
-			this.setOnMouseDragEntered(e -> {
-				System.out.printf("%d:%d dragging continues \n", col, row);
-				this.getStyleClass().add("marked");
-				model.addToPath(row, col);
-			});
-			this.setOnMouseDragReleased(e -> {
-				System.out.printf("%d:%d dragging stopped \n", col, row);
-				model.moveAlongPath();
-			});
-		}
+		setPosition(this.row, this.col);
 		updateVisual();
 	}
 
