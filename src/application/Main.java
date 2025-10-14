@@ -510,6 +510,74 @@ public class Main extends Application {
 
 		pickaxeSection.getChildren().addAll(pickaxeTitle, levelText, damageText, costText, buyButton);
 
+		VBox oxygenSection = new VBox(10);
+		oxygenSection.setStyle("-fx-border-color: black; -fx-border-width: 2px; -fx-padding: 15;");
+
+		Text oxygenTitle = new Text("OXYGEN UPGRADE");
+		oxygenTitle.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+
+		final Text oxygenLevelText = new Text("Current Level: " + (miner.getOxygenLevel() + 1));
+		oxygenLevelText.setFont(Font.font("Arial", 14));
+
+		final Text oxygenTimeText = new Text("Current Oxygen: " + miner.getMaxOxygen() + "s");
+		oxygenTimeText.setFont(Font.font("Arial", 14));
+
+		final Text oxygenCostText = new Text();
+		oxygenCostText.setFont(Font.font("Arial", 14));
+
+		final Button buyOxygenButton = new Button("BUY");
+		buyOxygenButton.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+		buyOxygenButton.setMinWidth(100);
+		buyOxygenButton.setMinHeight(35);
+
+		Runnable updateOxygenDialogState = () -> {
+			oxygenLevelText.setText("Current Level: " + (miner.getOxygenLevel() + 1));
+			oxygenTimeText.setText("Current Oxygen: " + miner.getMaxOxygen() + "s");
+
+			if (Shop.isMaxOxygenLevel(miner)) {
+				oxygenCostText.setText("MAX LEVEL REACHED");
+				oxygenCostText.setFill(Color.RED);
+				buyOxygenButton.setDisable(true);
+				buyOxygenButton.setStyle("-fx-background-color: #CCCCCC; -fx-border-color: black; -fx-border-width: 2px;");
+			} else {
+				int nextCost = Shop.getNextOxygenCost(miner);
+				int nextOxygen = Shop.getNextOxygenTime(miner);
+				oxygenCostText.setText("Next Level: " + (miner.getOxygenLevel() + 2) +
+						" | Oxygen: " + nextOxygen + "s | Cost: " + nextCost);
+				oxygenCostText.setFill(Color.BLACK);
+				buyOxygenButton.setDisable(false);
+				buyOxygenButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2px;");
+			}
+		};
+
+		updateOxygenDialogState.run();
+
+		buyOxygenButton.setOnMouseEntered(e -> {
+			if (!buyOxygenButton.isDisabled()) {
+				buyOxygenButton.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 2px;");
+			}
+		});
+
+		buyOxygenButton.setOnMouseExited(e -> {
+			if (!buyOxygenButton.isDisabled()) {
+				buyOxygenButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2px;");
+			}
+		});
+
+		buyOxygenButton.setOnAction(e -> {
+			if (Shop.buyOxygenUpgrade(miner, model)) {
+				updateOxygenDialogState.run();
+			} else {
+				Alert alert = new Alert(Alert.AlertType.WARNING);
+				alert.setTitle("Insufficient Gold");
+				alert.setHeaderText("Cannot Buy Upgrade");
+				alert.setContentText("You don't have enough gold for this upgrade!");
+				alert.showAndWait();
+			}
+		});
+
+		oxygenSection.getChildren().addAll(oxygenTitle, oxygenLevelText, oxygenTimeText, oxygenCostText, buyOxygenButton);
+
 		Button closeButton = new Button("✕");
 		closeButton.setFont(Font.font("Arial", FontWeight.BOLD, 16));
 		closeButton.setMinWidth(40);
@@ -527,7 +595,7 @@ public class Main extends Application {
 		topBar.setAlignment(Pos.TOP_RIGHT);
 		topBar.getChildren().add(closeButton);
 
-		dialogLayout.getChildren().addAll(topBar, title, pickaxeSection);
+		dialogLayout.getChildren().addAll(topBar, title, pickaxeSection, oxygenSection);
 
 		dialog.getDialogPane().setContent(dialogLayout);
 		dialog.showAndWait();

@@ -4,9 +4,10 @@ public class Miner {
     private int row, col;
     private int toolsDamage = 1;
     private int pickaxeLevel = 0;
+    private int oxygenLevel = 0;
     private String characterImage;
     private int goldAmount = 0;
-    private int maxOxygen = 10;
+    private int maxOxygen = 30;
     private int currentOxygen = maxOxygen;
     private int layerSize = 10;
     private int groundLevel = 4;
@@ -21,6 +22,23 @@ public class Miner {
 
     public int getRow() { return row; }
     public int getCol() { return col; }
+
+    public int getMaxOxygen() {
+        return maxOxygen;
+    }
+
+    public void setMaxOxygen(int maxOxygen) {
+        this.maxOxygen = maxOxygen;
+        this.currentOxygen = maxOxygen;
+    }
+
+    public int getOxygenLevel() {
+        return oxygenLevel;
+    }
+
+    public void setOxygenLevel(int oxygenLevel) {
+        this.oxygenLevel = oxygenLevel;
+    }
 
     public void setPosition(int row, int col) {
         this.row = row;

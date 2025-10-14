@@ -165,6 +165,7 @@ public class GameModel {
 			gameWon = true;
 			System.out.println("YOU WIN!");
 			if (winCallback != null) {
+				timer.stop();
 				winCallback.run();
 			}
 		}
