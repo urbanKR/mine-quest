@@ -318,11 +318,23 @@ public class Main extends Application {
 		// --- Game model ---
 		GameModel model = new GameModel(selectedCharacter, selectedDifficulty);
 		model.setGameStage(stage);
+		KeyCodeManager keyCodeMgr = model.getKeyCodeManager();
 
 		model.setCallback(() -> updateVisuals());
 		model.setWinCallback(() -> showWinDialog(stage));
 		model.setLoseCallback(() -> showLoseDialog(stage));
 		model.setShopCallback(() -> showShopDialog(stage, model));
+
+		model.setKeyCollectedCallback(() -> {
+			int keysCollected = model.getKeysCollected();
+			int keyIndex = keysCollected - 1; // Last key collected (0-indexed)
+			String keyCode = keyCodeMgr.getKeyCode(keyIndex);
+			showKeyCodePopup(stage, keyCode, keysCollected); // Pass key number
+		});
+
+		model.setChestOpenedCallback(() -> {
+			showChestCodeDialog(stage, model);
+		});
 
 		// --- GridPane for map ---
 		GridPane gridPane = new GridPane();
@@ -411,7 +423,7 @@ public class Main extends Application {
 
 		Scene gameScene = new Scene(root, 816, 650);
 		gameScene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-		
+
 		// --- Key controls ---
 		gameScene.setOnKeyPressed(event -> {
 			switch (event.getCode()) {
@@ -749,6 +761,134 @@ public class Main extends Application {
 		topBar.getChildren().add(closeButton);
 
 		dialogLayout.getChildren().addAll(topBar, title, pickaxeSection, oxygenSection);
+
+		dialog.getDialogPane().setContent(dialogLayout);
+		dialog.showAndWait();
+	}
+
+	private void showKeyCodePopup(Stage stage, String keyCode, int keyNumber) {
+		Dialog<ButtonType> dialog = new Dialog<>();
+		dialog.setTitle("Secret Code Revealed!");
+		dialog.initStyle(StageStyle.UNDECORATED);
+		dialog.getDialogPane().getButtonTypes().clear();
+
+		VBox dialogLayout = new VBox(20);
+		dialogLayout.setAlignment(Pos.CENTER);
+		dialogLayout.setStyle("-fx-padding: 40;");
+		dialog.getDialogPane().getScene().getRoot()
+				.setStyle("-fx-border-color: black; -fx-border-width: 3px;");
+
+		Text title = new Text("✦ SECRET CODE ✦");
+		title.setFont(Font.font("Arial", FontWeight.BOLD, 32));
+
+		Text keyNumberText = new Text("KEY " + keyNumber + " of 3");
+		keyNumberText.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+		keyNumberText.setFill(Color.DARKBLUE);
+
+		Text codeDisplay = new Text(keyCode);
+		codeDisplay.setFont(Font.font("Arial", FontWeight.BOLD, 72));
+		codeDisplay.setFill(Color.BLACK);
+
+		Text message = new Text("Remember this code and its position!");
+		message.setFont(Font.font("Arial", 16));
+
+		Button okButton = new Button("OK");
+		okButton.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+		okButton.setMinWidth(120);
+		okButton.setMinHeight(40);
+		okButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;");
+
+		okButton.setOnMouseEntered(e -> okButton
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 3px;"));
+		okButton.setOnMouseExited(e -> okButton
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;"));
+
+		okButton.setOnAction(e -> dialog.setResult(ButtonType.OK));
+
+		dialogLayout.getChildren().addAll(title, keyNumberText, codeDisplay, message, okButton);
+		dialog.getDialogPane().setContent(dialogLayout);
+		dialog.showAndWait();
+	}
+
+	private void showChestCodeDialog(Stage stage, GameModel model) {
+		Dialog<ButtonType> dialog = new Dialog<>();
+		dialog.setTitle("Enter Code");
+		dialog.initStyle(StageStyle.UNDECORATED);
+		dialog.getDialogPane().getButtonTypes().clear();
+
+		VBox dialogLayout = new VBox(20);
+		dialogLayout.setAlignment(Pos.CENTER);
+		dialogLayout.setStyle("-fx-padding: 40;");
+		dialog.getDialogPane().getScene().getRoot()
+				.setStyle("-fx-border-color: black; -fx-border-width: 3px;");
+
+		Text title = new Text("FINAL CHEST");
+		title.setFont(Font.font("Arial", FontWeight.BOLD, 36));
+
+		Text instruction = new Text("Enter the 3 secret codes you found:");
+		instruction.setFont(Font.font("Arial", 16));
+
+		TextField codeInput = new TextField();
+		codeInput.setPromptText("ABC");
+		codeInput.setFont(Font.font("Arial", 20));
+		codeInput.setStyle("-fx-padding: 10; -fx-border-color: black; -fx-border-width: 2px;");
+		codeInput.setMaxWidth(200);
+		codeInput.setAlignment(Pos.CENTER);
+		codeInput.setTextFormatter(new TextFormatter<>(c -> {
+			if (c.getControlNewText().length() <= 3) {
+				return c;
+			}
+			return null;
+		}));
+
+		Text feedbackText = new Text("");
+		feedbackText.setFont(Font.font("Arial", 16));
+		feedbackText.setFill(Color.RED);
+
+		HBox buttonBox = new HBox(20);
+		buttonBox.setAlignment(Pos.CENTER);
+
+		Button submitButton = new Button("OPEN CHEST");
+		submitButton.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+		submitButton.setMinWidth(150);
+		submitButton.setMinHeight(40);
+		submitButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2px;");
+
+		Button cancelButton = new Button("CANCEL");
+		cancelButton.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+		cancelButton.setMinWidth(150);
+		cancelButton.setMinHeight(40);
+		cancelButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2px;");
+
+		submitButton.setOnMouseEntered(e -> submitButton
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 2px;"));
+		submitButton.setOnMouseExited(e -> submitButton
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2px;"));
+
+		cancelButton.setOnMouseEntered(e -> cancelButton
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 2px;"));
+		cancelButton.setOnMouseExited(e -> cancelButton
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 2px;"));
+
+		submitButton.setOnAction(e -> {
+			String enteredCode = codeInput.getText().toUpperCase();
+			String correctCode = model.getKeyCodeManager().getAllKeyCodes();
+
+			if (enteredCode.equals(correctCode)) {
+				dialog.setResult(ButtonType.OK);
+				model.checkWinCondition();
+				model.checkWinCondition();
+			} else {
+				feedbackText.setText("✗ Wrong code! Try again.");
+				codeInput.clear();
+				codeInput.requestFocus();
+			}
+		});
+
+		cancelButton.setOnAction(e -> dialog.setResult(ButtonType.CANCEL));
+
+		buttonBox.getChildren().addAll(submitButton, cancelButton);
+		dialogLayout.getChildren().addAll(title, instruction, codeInput, feedbackText, buttonBox);
 
 		dialog.getDialogPane().setContent(dialogLayout);
 		dialog.showAndWait();

@@ -24,6 +24,8 @@ public class GameModel {
 	private Runnable goldCallback;
 	private Runnable oxygenCallback;
 	private Runnable shopCallback;
+	private Runnable keyCollectedCallback;
+	private Runnable chestOpenedCallback;
 
 	private boolean gameWon;
 	private final int startRowMiner = 4;
@@ -38,10 +40,12 @@ public class GameModel {
 
 	private Timeline timer;
 	private Timeline enemyTimer;
+	private KeyCodeManager keyCodeManager;
 
 	public GameModel(String characterImage, Difficulty difficulty) {
 		this.miner = new Miner(startRowMiner, startColMiner, characterImage);
 		this.map = new Map(miner, this, difficulty);
+		this.keyCodeManager = new KeyCodeManager();
 		this.gameWon = false;
 
 		miner.setLoseCallback(() -> {timer.stop(); enemyTimer.stop(); loseCallback.run();});
@@ -193,9 +197,14 @@ public class GameModel {
 	}
 
 	// Key collection
-	public void collectKey() {
+	public void collectKey(int keyIndex) {
 		keysCollected++;
+		keyCodeManager.collectKey(keyIndex);
 		System.out.println("Key collected! Total: " + keysCollected + "/" + totalKeys);
+
+		if (keyCollectedCallback != null) {
+			keyCollectedCallback.run();
+		}
 	}
 
 	public boolean hasAllKeys() {
@@ -250,6 +259,8 @@ public class GameModel {
 	public void setShopCallback(Runnable shopCallback) {
 		this.shopCallback = shopCallback;
 	}
+	public void setKeyCollectedCallback(Runnable callback) { this.keyCollectedCallback = callback; }
+	public void setChestOpenedCallback(Runnable callback) { this.chestOpenedCallback = callback; }
 	// getters
 	public Map getMap() {
 		return map;
@@ -257,6 +268,9 @@ public class GameModel {
 
 	public Miner getMiner() {
 		return miner;
+	}
+	public KeyCodeManager getKeyCodeManager() {
+		return keyCodeManager;
 	}
 
 	public boolean isGameWon() {
@@ -273,6 +287,12 @@ public class GameModel {
 	public void notifyGoldChanged() {
 		if (goldCallback != null) {
 			goldCallback.run();
+		}
+	}
+
+	public void openChest() {
+		if (chestOpenedCallback != null) {
+			chestOpenedCallback.run();
 		}
 	}
 }

@@ -19,7 +19,7 @@ public class Cell extends Button {
 	private Miner miner;
 	private Map map;
 	private GameModel model;
-	
+
 	private String enemy_img = "bat.png";
 
 	private boolean revealed = false;
@@ -29,13 +29,13 @@ public class Cell extends Button {
 	private boolean walkable = true;
 	private boolean destroyed = false;
 	private int goldValue = 0;
+	private int keyIndex = -1;
 
 	public Cell(CellType type, Miner miner, Map map, GameModel model) {
 		this.type = type;
 		this.miner = miner;
 		this.map = map;
 		this.model = model;
-
 
 		switch (type) {
 			case SKY, FINAL_CHEST, SHOP:
@@ -134,7 +134,7 @@ public class Cell extends Button {
 				}
 
 				if (type == CellType.SECRET_KEY) {
-					model.collectKey();
+					model.collectKey(this.keyIndex);
 				}
 
 				type = CellType.DESTROYED;
@@ -143,7 +143,7 @@ public class Cell extends Button {
 		}
 
 		if (type == CellType.FINAL_CHEST && this.mineable && model.hasAllKeys()) {
-			model.checkWinCondition();
+			model.openChest();
 		}
 	}
 
@@ -187,7 +187,14 @@ public class Cell extends Button {
 		return col;
 	}
 
-	// --- Getters and setters ---
+	public void setKeyIndex(int index) {
+		this.keyIndex = index;
+	}
+
+	public int getKeyIndex() {
+		return keyIndex;
+	}
+
 	public CellType getType() {
 		return type;
 	}
@@ -225,11 +232,11 @@ public class Cell extends Button {
 		setPosition(this.row, this.col);
 		updateVisual();
 	}
-	
+
 	public boolean hasEnemy() {
 		return hasEnemy;
 	}
-	
+
 	public void setHasEnemy(boolean hasEnemy) {
 		this.hasEnemy = hasEnemy;
 	}
@@ -247,124 +254,124 @@ public class Cell extends Button {
 
 	// --- Visual representation ---
 	public void updateVisual() {
-	    getStyleClass().clear();
-	    getStyleClass().add("cell");
-	    
-	    // Enemy jest widoczny tylko gdy komórka jest revealed
-	    boolean enemyVisible = hasEnemy && revealed;
-	    
-	    if (hasMiner && enemyVisible) {
-	        String bgColor = getBackgroundColorForType();
-	        setStyle("-fx-background-color: " + bgColor + "; "
-	                + "-fx-background-image: url(\"file:img/" + miner.getCharacterImage() + "\"), "
-	                + "url(\"file:img/" + enemy_img + "\"); "
-	                + "-fx-background-size: contain, contain; "
-	                + "-fx-background-repeat: no-repeat, no-repeat; "
-	                + "-fx-background-position: center, center;");
-	        this.setOnMouseEntered(null);
-	        this.setOnMouseExited(null);
-	    } else if (hasMiner) {
-	        String bgColor = getBackgroundColorForType();
-	        setStyle("-fx-background-color: " + bgColor + "; "
-	                + "-fx-background-image: url(\"file:img/" + miner.getCharacterImage() + "\"); "
-	                + "-fx-background-size: contain; "
-	                + "-fx-background-repeat: no-repeat; "
-	                + "-fx-background-position: center;");
-	        this.setOnMouseEntered(null);
-	        this.setOnMouseExited(null);
-	    } else if (enemyVisible) {
-	        String bgColor = getBackgroundColorForType();
-	        setStyle("-fx-background-color: " + bgColor + "; "
-	                + "-fx-background-image: url(\"file:img/" + enemy_img + "\"); "
-	                + "-fx-background-size: contain; "
-	                + "-fx-background-repeat: no-repeat; "
-	                + "-fx-background-position: center;");
-	        this.setOnMouseEntered(null);
-	        this.setOnMouseExited(null);
-	    } else if (!revealed) {
-	        setStyle("");
-	        getStyleClass().add("unrevealed");
-	        this.setOnMouseEntered(null);
-	        this.setOnMouseExited(null);
-	    } else {
-	        setStyle("");
-	        switch (type) {
-	            case SKY, SKY_WALKABLE -> {
-	                getStyleClass().add("sky");
-	                this.setOnMouseEntered(null);
-	                this.setOnMouseExited(null);
-	            }
-	            case FINAL_CHEST -> {
-	                getStyleClass().add("final-chest");
-	                this.setOnMouseEntered(null);
-	                this.setOnMouseExited(null);
-	            }
-	            case GRASS -> {
-	                getStyleClass().add("grass");
-	                setMiningCursor();
-	            }
-	            case DIRT -> {
-	                getStyleClass().add("dirt");
-	                setMiningCursor();
-	            }
-	            case GRAVEL -> {
-	                getStyleClass().add("gravel");
-	                setMiningCursor();
-	            }
-	            case STONE -> {
-	                getStyleClass().add("stone");
-	                setMiningCursor();
-	            }
-	            case COAL -> {
-	                getStyleClass().add("coal");
-	                setMiningCursor();
-	            }
-	            case IRON -> {
-	                getStyleClass().add("iron");
-	                setMiningCursor();
-	            }
-	            case GOLD -> {
-	                getStyleClass().add("gold");
-	                setMiningCursor();
-	            }
-	            case DESTROYED -> {
-	                getStyleClass().add("destroyed");
-	                this.setOnMouseEntered(null);
-	                this.setOnMouseExited(null);
-	            }
-	            case SECRET_KEY -> {
-	                getStyleClass().add("secret-key");
-	                this.setOnMouseEntered(null);
-	                this.setOnMouseExited(null);
-	            }
-	            case FINAL_AREA -> {
-	                getStyleClass().add("final-area");
-	                this.setOnMouseEntered(null);
-	                this.setOnMouseExited(null);
-	            }
-	            case SHOP -> {
-	                getStyleClass().add("shop");
-	                this.setOnMouseEntered(null);
-	                this.setOnMouseExited(null);
-	            }
-	        }
-	    }
+		getStyleClass().clear();
+		getStyleClass().add("cell");
+
+		// Enemy jest widoczny tylko gdy komórka jest revealed
+		boolean enemyVisible = hasEnemy && revealed;
+
+		if (hasMiner && enemyVisible) {
+			String bgColor = getBackgroundColorForType();
+			setStyle("-fx-background-color: " + bgColor + "; "
+					+ "-fx-background-image: url(\"file:img/" + miner.getCharacterImage() + "\"), "
+					+ "url(\"file:img/" + enemy_img + "\"); "
+					+ "-fx-background-size: contain, contain; "
+					+ "-fx-background-repeat: no-repeat, no-repeat; "
+					+ "-fx-background-position: center, center;");
+			this.setOnMouseEntered(null);
+			this.setOnMouseExited(null);
+		} else if (hasMiner) {
+			String bgColor = getBackgroundColorForType();
+			setStyle("-fx-background-color: " + bgColor + "; "
+					+ "-fx-background-image: url(\"file:img/" + miner.getCharacterImage() + "\"); "
+					+ "-fx-background-size: contain; "
+					+ "-fx-background-repeat: no-repeat; "
+					+ "-fx-background-position: center;");
+			this.setOnMouseEntered(null);
+			this.setOnMouseExited(null);
+		} else if (enemyVisible) {
+			String bgColor = getBackgroundColorForType();
+			setStyle("-fx-background-color: " + bgColor + "; "
+					+ "-fx-background-image: url(\"file:img/" + enemy_img + "\"); "
+					+ "-fx-background-size: contain; "
+					+ "-fx-background-repeat: no-repeat; "
+					+ "-fx-background-position: center;");
+			this.setOnMouseEntered(null);
+			this.setOnMouseExited(null);
+		} else if (!revealed) {
+			setStyle("");
+			getStyleClass().add("unrevealed");
+			this.setOnMouseEntered(null);
+			this.setOnMouseExited(null);
+		} else {
+			setStyle("");
+			switch (type) {
+				case SKY, SKY_WALKABLE -> {
+					getStyleClass().add("sky");
+					this.setOnMouseEntered(null);
+					this.setOnMouseExited(null);
+				}
+				case FINAL_CHEST -> {
+					getStyleClass().add("final-chest");
+					this.setOnMouseEntered(null);
+					this.setOnMouseExited(null);
+				}
+				case GRASS -> {
+					getStyleClass().add("grass");
+					setMiningCursor();
+				}
+				case DIRT -> {
+					getStyleClass().add("dirt");
+					setMiningCursor();
+				}
+				case GRAVEL -> {
+					getStyleClass().add("gravel");
+					setMiningCursor();
+				}
+				case STONE -> {
+					getStyleClass().add("stone");
+					setMiningCursor();
+				}
+				case COAL -> {
+					getStyleClass().add("coal");
+					setMiningCursor();
+				}
+				case IRON -> {
+					getStyleClass().add("iron");
+					setMiningCursor();
+				}
+				case GOLD -> {
+					getStyleClass().add("gold");
+					setMiningCursor();
+				}
+				case DESTROYED -> {
+					getStyleClass().add("destroyed");
+					this.setOnMouseEntered(null);
+					this.setOnMouseExited(null);
+				}
+				case SECRET_KEY -> {
+					getStyleClass().add("secret-key");
+					this.setOnMouseEntered(null);
+					this.setOnMouseExited(null);
+				}
+				case FINAL_AREA -> {
+					getStyleClass().add("final-area");
+					this.setOnMouseEntered(null);
+					this.setOnMouseExited(null);
+				}
+				case SHOP -> {
+					getStyleClass().add("shop");
+					this.setOnMouseEntered(null);
+					this.setOnMouseExited(null);
+				}
+			}
+		}
 	}
-	
+
 	private static final java.util.Map<String, ImageCursor> CURSOR_CACHE = new HashMap<>();
 	private void setMiningCursor() {
-	    String pickaxePath = "file:img/" + miner.getPickaxeImage();
-	    
-	    this.setOnMouseEntered(e -> {
-	        ImageCursor cursor = CURSOR_CACHE.computeIfAbsent(pickaxePath, path -> {
-	            return new ImageCursor(new Image(path));
-	        });
-	        this.setCursor(cursor);
-	    });
-	    
-	    this.setOnMouseExited(e -> {
-	        this.setCursor(Cursor.DEFAULT);
-	    });
+		String pickaxePath = "file:img/" + miner.getPickaxeImage();
+
+		this.setOnMouseEntered(e -> {
+			ImageCursor cursor = CURSOR_CACHE.computeIfAbsent(pickaxePath, path -> {
+				return new ImageCursor(new Image(path));
+			});
+			this.setCursor(cursor);
+		});
+
+		this.setOnMouseExited(e -> {
+			this.setCursor(Cursor.DEFAULT);
+		});
 	}
 
 	private String getBackgroundColorForType() {
@@ -372,15 +379,15 @@ public class Cell extends Button {
 			return "#A0A0A0";
 		}
 
-        return switch (type) {
-            case GRASS -> "#A3E055";
-            case DIRT -> "#8B4513";
-            case DESTROYED -> "#7a7672";
-            case SECRET_KEY -> "#FFD700";
-            case FINAL_AREA -> "#386251";
-            case SHOP -> "transparent";
-            default -> "#87CEEB";
-        };
+		return switch (type) {
+			case GRASS -> "#A3E055";
+			case DIRT -> "#8B4513";
+			case DESTROYED -> "#7a7672";
+			case SECRET_KEY -> "#FFD700";
+			case FINAL_AREA -> "#386251";
+			case SHOP -> "transparent";
+			default -> "#87CEEB";
+		};
 	}
 
 	private List<Cell> getAdjacentCells() {
