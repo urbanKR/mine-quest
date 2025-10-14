@@ -2,10 +2,15 @@ package application;
 
 import static application.Difficulty.getEasyLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Map {
 	private int rows = 30;
 	private int cols = 20;
 	private final Cell[][] cells;
+	
+	private List<Enemy> enemies;	
 	public Map(Miner miner, GameModel model, Difficulty difficulty) {
 		int[][] layout = switch (difficulty) {
             case MEDIUM -> Difficulty.getMediumLayout();
@@ -16,9 +21,12 @@ public class Map {
         this.rows = layout.length;
 		this.cols = layout[0].length;
 
+		this.enemies = new ArrayList<>();
+		
 		cells = new Cell[rows][cols];
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
+				boolean enemy = false;
 				CellType type;
 				switch (layout[i][j]) {
 					case 1 -> type = CellType.SKY_WALKABLE;
@@ -33,9 +41,12 @@ public class Map {
 					case 10 -> type = CellType.COAL;
 					case 11 -> type = CellType.IRON;
 					case 12 -> type = CellType.GOLD;
+					case -1 -> {type = CellType.DESTROYED; enemy = true; enemies.add(new Enemy(miner, this,i,j));}
+					case 100 -> type = CellType.DESTROYED;
 					default -> type = CellType.SKY;
 				}
 				cells[i][j] = new Cell(type, miner, this, model);
+				cells[i][j].setHasEnemy(enemy);
 				cells[i][j].setPosition(i, j);
 			}
 		}
@@ -51,5 +62,9 @@ public class Map {
 
 	public int getCols() {
 		return cols;
+	}
+	
+	public List<Enemy> getEnemies() {
+		return enemies;
 	}
 }

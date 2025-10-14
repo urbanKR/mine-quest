@@ -71,6 +71,16 @@ public class Miner {
     	System.out.println(currentOxygen);
     }
 
+	 public void hurt(int damage) {
+	    	currentOxygen -= damage;
+	    	
+	    	if(currentOxygen < - 8) {
+	    		if(loseCallback != null) {
+	    			loseCallback.run();
+	    		}
+	    	}
+	 }
+    
     public void setToolsDamage(int damage) {
         this.toolsDamage = damage;
     }

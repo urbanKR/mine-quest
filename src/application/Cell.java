@@ -5,6 +5,7 @@ import javafx.scene.ImageCursor;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseDragEvent;
+import java.util.HashMap;
 
 public class Cell extends Button {
 	private int row;
@@ -15,10 +16,13 @@ public class Cell extends Button {
 	private Miner miner;
 	private Map map;
 	private GameModel model;
+	
+	private String enemy_img = "bat.png";
 
 	private boolean revealed = false;
 	private boolean mineable = false;
 	private boolean hasMiner = false;
+	private boolean hasEnemy = false;
 	private boolean walkable = true;
 	private boolean destroyed = false;
 	private int goldValue = 0;
@@ -215,6 +219,14 @@ public class Cell extends Button {
 		setPosition(this.row, this.col);
 		updateVisual();
 	}
+	
+	public boolean hasEnemy() {
+		return hasEnemy;
+	}
+	
+	public void setHasEnemy(boolean hasEnemy) {
+		this.hasEnemy = hasEnemy;
+	}
 
 	public void setMineable(boolean mineable) {
 		this.mineable = mineable;
@@ -227,153 +239,126 @@ public class Cell extends Button {
 		}
 	}
 
-	/** @noinspection CssUnknownTarget*/ // --- Visual representation ---
+	// --- Visual representation ---
 	public void updateVisual() {
-		if (hasMiner) {
-			String backgroundColor = getBackgroundColorForType();
-
-			setStyle("-fx-background-color: " + backgroundColor + "; "
-					+ "-fx-background-image: url('file:img/" + miner.getCharacterImage() + "'); "
-					+ "-fx-background-size: contain; "
-					+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
-					+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
-			this.setOnMouseEntered(null);
-			if (!backgroundColor.isEmpty()) {
-				setStyle(getStyle() + " -fx-background-color: " + backgroundColor + ";");
-			}
-		} else if (!revealed) {
-			setStyle("-fx-background-color: #A0A0A0; -fx-border-color: #808080; -fx-border-width: 1px;");
-			this.setOnMouseEntered(null);
-		} else {
-			String s = "file:img/" + miner.getPickaxeImage();
-			Image image = new Image(s);
-
-			switch (type) {
-				case SKY, SKY_WALKABLE:
-					setStyle("-fx-background-color: #87CEEB; -fx-border-color: #87CEEB; -fx-border-width: 1px;");
-					this.setOnMouseEntered(null);
-					break;
-				case FINAL_CHEST:
-					setStyle("-fx-background-image: url('file:img/chest.png'); "
-							+ "-fx-background-size: contain; "
-							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
-							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
-					this.setOnMouseEntered(null);
-					break;
-				case GRASS:
-					setStyle("-fx-background-image: url('file:img/dirt-grass.png'); "
-							+ "-fx-background-size: contain; "
-							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
-							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
-					this.setOnMouseEntered(e -> {
-						this.setCursor(new ImageCursor(image));;
-					});
-					this.setOnMouseExited(e -> {
-						this.setCursor(Cursor.DEFAULT);
-					});
-					break;
-				case DIRT:
-					setStyle("-fx-background-image: url('file:img/dirt.png'); "
-							+ "-fx-background-size: contain; "
-							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
-							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
-					this.setOnMouseEntered(e -> {
-						this.setCursor(new ImageCursor(image));;
-					});
-					this.setOnMouseExited(e -> {
-						this.setCursor(Cursor.DEFAULT);
-					});
-					break;
-				case GRAVEL:
-					setStyle("-fx-background-image: url('file:img/gravel.png'); "
-							+ "-fx-background-size: contain; "
-							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
-							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
-					this.setOnMouseEntered(e -> {
-						this.setCursor(new ImageCursor(image));;
-					});
-					this.setOnMouseExited(e -> {
-						this.setCursor(Cursor.DEFAULT);
-					});
-					break;
-				case STONE:
-					setStyle("-fx-background-image: url('file:img/stone.png'); "
-							+ "-fx-background-size: contain; "
-							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
-							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
-					this.setOnMouseEntered(e -> {
-						this.setCursor(new ImageCursor(image));;
-					});
-					this.setOnMouseExited(e -> {
-						this.setCursor(Cursor.DEFAULT);
-					});
-					break;
-				case COAL:
-					setStyle("-fx-background-image: url('file:img/coal.png'); "
-							+ "-fx-background-size: contain; "
-							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
-							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
-					this.setOnMouseEntered(e -> {
-						this.setCursor(new ImageCursor(image));;
-					});
-					this.setOnMouseExited(e -> {
-						this.setCursor(Cursor.DEFAULT);
-					});
-					break;
-				case IRON:
-					setStyle("-fx-background-image: url('file:img/iron.png'); "
-							+ "-fx-background-size: contain; "
-							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
-							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
-					this.setOnMouseEntered(e -> {
-						this.setCursor(new ImageCursor(image));;
-					});
-					this.setOnMouseExited(e -> {
-						this.setCursor(Cursor.DEFAULT);
-					});
-					break;
-				case GOLD:
-					setStyle("-fx-background-image: url('file:img/gold.png'); "
-							+ "-fx-background-size: contain; "
-							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
-							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
-					this.setOnMouseEntered(e -> {
-						this.setCursor(new ImageCursor(image));;
-					});
-					this.setOnMouseExited(e -> {
-						this.setCursor(Cursor.DEFAULT);
-					});
-					break;
-				case DESTROYED:
-					setStyle("-fx-background-color: #7a7672; -fx-border-color: #5A2E0F; -fx-border-width: 1px;");
-					this.setOnMouseEntered(null);
-					break;
-				case SECRET_KEY:
-					setStyle("-fx-background-image: url('file:img/key-block.png'); "
-							+ "-fx-background-size: contain; "
-							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
-							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
-					this.setOnMouseEntered(null);
-					break;
-				case FINAL_AREA:
-					setStyle("-fx-background-image: url('file:img/final-area-block.png'); "
-							+ "-fx-background-size: contain; "
-							+ "-fx-background-repeat: no-repeat; " + "-fx-background-position: center; "
-							+ "-fx-background-insets: 0; " + "-fx-background-radius: 0; " + "-fx-border-radius: 0;");
-					this.setOnMouseEntered(null);
-					break;
-				case SHOP:
-					setStyle("-fx-background-image: url('file:img/shop.png'); " +
-							"-fx-background-size: 120%; " +
-							"-fx-background-repeat: no-repeat; " +
-							"-fx-background-position: center; " +
-							"-fx-background-color: transparent; " +
-							"-fx-border-color: transparent; " +
-							"-fx-border-width: 0px;");
-					this.setOnMouseEntered(null);
-					break;
-			}
-		}
+	    getStyleClass().clear();
+	    getStyleClass().add("cell");
+	    
+	    // Enemy jest widoczny tylko gdy komórka jest revealed
+	    boolean enemyVisible = hasEnemy && revealed;
+	    
+	    if (hasMiner && enemyVisible) {
+	        String bgColor = getBackgroundColorForType();
+	        setStyle("-fx-background-color: " + bgColor + "; "
+	                + "-fx-background-image: url(\"file:img/" + miner.getCharacterImage() + "\"), "
+	                + "url(\"file:img/" + enemy_img + "\"); "
+	                + "-fx-background-size: contain, contain; "
+	                + "-fx-background-repeat: no-repeat, no-repeat; "
+	                + "-fx-background-position: center, center;");
+	        this.setOnMouseEntered(null);
+	        this.setOnMouseExited(null);
+	    } else if (hasMiner) {
+	        String bgColor = getBackgroundColorForType();
+	        setStyle("-fx-background-color: " + bgColor + "; "
+	                + "-fx-background-image: url(\"file:img/" + miner.getCharacterImage() + "\"); "
+	                + "-fx-background-size: contain; "
+	                + "-fx-background-repeat: no-repeat; "
+	                + "-fx-background-position: center;");
+	        this.setOnMouseEntered(null);
+	        this.setOnMouseExited(null);
+	    } else if (enemyVisible) {
+	        String bgColor = getBackgroundColorForType();
+	        setStyle("-fx-background-color: " + bgColor + "; "
+	                + "-fx-background-image: url(\"file:img/" + enemy_img + "\"); "
+	                + "-fx-background-size: contain; "
+	                + "-fx-background-repeat: no-repeat; "
+	                + "-fx-background-position: center;");
+	        this.setOnMouseEntered(null);
+	        this.setOnMouseExited(null);
+	    } else if (!revealed) {
+	        setStyle("");
+	        getStyleClass().add("unrevealed");
+	        this.setOnMouseEntered(null);
+	        this.setOnMouseExited(null);
+	    } else {
+	        setStyle("");
+	        switch (type) {
+	            case SKY, SKY_WALKABLE -> {
+	                getStyleClass().add("sky");
+	                this.setOnMouseEntered(null);
+	                this.setOnMouseExited(null);
+	            }
+	            case FINAL_CHEST -> {
+	                getStyleClass().add("final-chest");
+	                this.setOnMouseEntered(null);
+	                this.setOnMouseExited(null);
+	            }
+	            case GRASS -> {
+	                getStyleClass().add("grass");
+	                setMiningCursor();
+	            }
+	            case DIRT -> {
+	                getStyleClass().add("dirt");
+	                setMiningCursor();
+	            }
+	            case GRAVEL -> {
+	                getStyleClass().add("gravel");
+	                setMiningCursor();
+	            }
+	            case STONE -> {
+	                getStyleClass().add("stone");
+	                setMiningCursor();
+	            }
+	            case COAL -> {
+	                getStyleClass().add("coal");
+	                setMiningCursor();
+	            }
+	            case IRON -> {
+	                getStyleClass().add("iron");
+	                setMiningCursor();
+	            }
+	            case GOLD -> {
+	                getStyleClass().add("gold");
+	                setMiningCursor();
+	            }
+	            case DESTROYED -> {
+	                getStyleClass().add("destroyed");
+	                this.setOnMouseEntered(null);
+	                this.setOnMouseExited(null);
+	            }
+	            case SECRET_KEY -> {
+	                getStyleClass().add("secret-key");
+	                this.setOnMouseEntered(null);
+	                this.setOnMouseExited(null);
+	            }
+	            case FINAL_AREA -> {
+	                getStyleClass().add("final-area");
+	                this.setOnMouseEntered(null);
+	                this.setOnMouseExited(null);
+	            }
+	            case SHOP -> {
+	                getStyleClass().add("shop");
+	                this.setOnMouseEntered(null);
+	                this.setOnMouseExited(null);
+	            }
+	        }
+	    }
+	}
+	
+	private static final java.util.Map<String, ImageCursor> CURSOR_CACHE = new HashMap<>();
+	private void setMiningCursor() {
+	    String pickaxePath = "file:img/" + miner.getPickaxeImage();
+	    
+	    this.setOnMouseEntered(e -> {
+	        ImageCursor cursor = CURSOR_CACHE.computeIfAbsent(pickaxePath, path -> {
+	            return new ImageCursor(new Image(path));
+	        });
+	        this.setCursor(cursor);
+	    });
+	    
+	    this.setOnMouseExited(e -> {
+	        this.setCursor(Cursor.DEFAULT);
+	    });
 	}
 
 	private String getBackgroundColorForType() {

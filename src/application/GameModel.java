@@ -37,6 +37,7 @@ public class GameModel {
 	private final int totalKeys = 3;
 
 	private Timeline timer;
+	private Timeline enemyTimer;
 
 	public GameModel(String characterImage, Difficulty difficulty) {
 		this.miner = new Miner(startRowMiner, startColMiner, characterImage);
@@ -53,6 +54,45 @@ public class GameModel {
 		// Place miner on the map at start
 		map.getCells()[startRowMiner][startColMiner].setHasMiner(true);
 		startTimer();
+		
+		moveEnemy();
+	}
+	
+	private void moveEnemy() {
+	    if (enemyTimer != null) {
+	        return;
+	    }
+	    
+	    enemyTimer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+	        Cell[][] cells = map.getCells();
+	        
+	        for(Enemy enemy : map.getEnemies()) {
+	            int newCol = enemy.getCol() + enemy.getDirection();
+	            int row = enemy.getRow();
+	            
+	            if (newCol < 0 || newCol >= map.getCols() || !cells[row][newCol].isWalkable()) {
+	                enemy.revertDirection(); //
+	                continue;
+	            }
+	            
+	            // remove enemy from old cell
+	            cells[enemy.getRow()][enemy.getCol()].setHasEnemy(false);
+	            cells[enemy.getRow()][enemy.getCol()].updateVisual();
+	            
+	            if (cells[row][newCol].hasMiner()) {
+	                miner.hurt(enemy.getDamage());
+	            }
+	            
+	            // move enemy
+	            enemy.move(row, newCol);
+	            
+	            // add enemy to new cell
+	            cells[row][newCol].setHasEnemy(true);
+	            cells[row][newCol].updateVisual();
+	        }
+	    }));
+	    enemyTimer.setCycleCount(Timeline.INDEFINITE);
+	    enemyTimer.play();
 	}
 
 	public boolean moveMiner(Direction direction) {
@@ -75,6 +115,10 @@ public class GameModel {
 
 		// check if target cell is walkable
 		if (!cells[newRow][newCol].isWalkable()) {
+			return false;
+		}
+		
+		if(cells[newRow][newCol].hasEnemy()) {
 			return false;
 		}
 

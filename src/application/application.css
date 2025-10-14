@@ -1,3 +1,77 @@
 .marked {
     -fx-opacity: 0.8 !important; 
 }
+.cell {
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: contain;
+}
+
+.cell.unrevealed {
+    -fx-background-color: #A0A0A0;
+    -fx-border-color: #808080;
+    -fx-border-width: 1px;
+}
+
+.cell.sky {
+    -fx-background-color: #87CEEB;
+    -fx-border-color: #87CEEB;
+    -fx-border-width: 1px;
+}
+
+.cell.grass {
+    -fx-background-image: url('file:img/dirt-grass.png');
+}
+
+.cell.dirt {
+    -fx-background-image: url('file:img/dirt.png');
+}
+
+.cell.gravel {
+    -fx-background-image: url('file:img/gravel.png');
+}
+
+.cell.stone {
+    -fx-background-image: url('file:img/stone.png');
+}
+
+.cell.coal {
+    -fx-background-image: url('file:img/coal.png');
+}
+
+.cell.iron {
+    -fx-background-image: url('file:img/iron.png');
+}
+
+.cell.gold {
+    -fx-background-image: url('file:img/gold.png');
+}
+
+.cell.destroyed {
+    -fx-background-color: #7a7672;
+    -fx-border-color: #5A2E0F;
+    -fx-border-width: 1px;
+}
+
+.cell.secret-key {
+    -fx-background-image: url('file:img/key-block.png');
+}
+
+.cell.final-area {
+    -fx-background-image: url('file:img/final-area-block.png');
+}
+
+.cell.final-chest {
+    -fx-background-image: url('file:img/chest.png');
+}
+
+.cell.shop {
+    -fx-background-image: url('file:img/shop.png');
+    -fx-background-size: 120%;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+}
