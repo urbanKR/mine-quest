@@ -44,7 +44,7 @@ public class GameModel {
 		this.map = new Map(miner, this, difficulty);
 		this.gameWon = false;
 
-		miner.setLoseCallback(() -> {timer.stop(); loseCallback.run();});
+		miner.setLoseCallback(() -> {timer.stop(); enemyTimer.stop(); loseCallback.run();});
 
 		this.rowsNum = map.getRows();
 		this.colsNum = map.getCols();
@@ -209,6 +209,7 @@ public class GameModel {
 			System.out.println("YOU WIN!");
 			if (winCallback != null) {
 				timer.stop();
+				enemyTimer.stop();
 				winCallback.run();
 			}
 		}
