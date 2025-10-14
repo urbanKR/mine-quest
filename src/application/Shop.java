@@ -2,11 +2,18 @@ package application;
 
 public class Shop {
     private static final int[][] PICKAXE_UPGRADES = {
-            {1, 10},      // Level 0: 1 damage, 10 gold cost
             {2, 20},      // Level 1: 2 damage, 20 gold cost
             {5, 50},      // Level 2: 5 damage, 50 gold cost
             {10, 70},     // Level 3: 10 damage, 70 gold cost
-            {20, 100}     // Level 4: 20 damage, 100 gold cost (MAX)
+            {20, 100},     // Level 4: 20 damage, 100 gold cost (MAX)
+            {40, 150}     // Level 5: 20 damage, 100 gold cost (MAX)
+    };
+    private static final String[] PICKAXE_IMAGES = {
+            "pickaxe-wood.png",         // Level 1
+            "pickaxe-stone.png",         // Level 2
+            "pickaxe-iron.png",        // Level 3
+            "pickaxe-diamond.png",      // Level 4
+            "pickaxe-special.png"       // Level 5
     };
 
     private static final int[][] OXYGEN_UPGRADES = {
@@ -42,6 +49,7 @@ public class Shop {
         miner.setPickaxeLevel(nextLevel);
         int newDamage = PICKAXE_UPGRADES[nextLevel][0];
         miner.setToolsDamage(newDamage);
+        miner.setPickaxeImage(PICKAXE_IMAGES[nextLevel]);
         model.notifyGoldChanged();
 
         return true;

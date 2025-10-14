@@ -6,6 +6,7 @@ public class Miner {
     private int pickaxeLevel = 0;
     private int oxygenLevel = 0;
     private String characterImage;
+    private String pickaxeImage = "pickaxe-wood.png";
     private int goldAmount = 0;
     private int maxOxygen = 30;
     private int currentOxygen = maxOxygen;
@@ -93,6 +94,14 @@ public class Miner {
 
     public void setGoldAmount(int goldAmount) {
         this.goldAmount = goldAmount;
+    }
+
+    public String getPickaxeImage() {
+        return pickaxeImage;
+    }
+
+    public void setPickaxeImage(String pickaxeImage) {
+        this.pickaxeImage = pickaxeImage;
     }
 
     public void addGold(int amount) {
