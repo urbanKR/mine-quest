@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 import javafx.animation.PauseTransition;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class GameModel {
 
@@ -36,16 +35,16 @@ public class GameModel {
 
 	private int keysCollected = 0;
 	private final int totalKeys = 3;
-	
+
 	private Timeline timer;
 
-	public GameModel(String characterImage) {
+	public GameModel(String characterImage, Difficulty difficulty) {
 		this.miner = new Miner(startRowMiner, startColMiner, characterImage);
-		this.map = new Map(miner, this);
+		this.map = new Map(miner, this, difficulty);
 		this.gameWon = false;
 
 		miner.setLoseCallback(() -> {timer.stop(); loseCallback.run();});
-		
+
 		this.rowsNum = map.getRows();
 		this.colsNum = map.getCols();
 
@@ -170,14 +169,11 @@ public class GameModel {
 			}
 		}
 	}
-	
 	public void startTimer() {
-		
 		timer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
 			miner.depleteOxygen();
 			oxygenCallback.run();
 		}));
-		
 		timer.setCycleCount(Timeline.INDEFINITE);
 		timer.play();
 	}
@@ -200,7 +196,6 @@ public class GameModel {
 	public void setWinCallback(Runnable winCallback) {
 		this.winCallback = winCallback;
 	}
-	
 	public void setLoseCallback(Runnable loseCallback) {
 		this.loseCallback = loseCallback;
 	}
@@ -210,7 +205,6 @@ public class GameModel {
 	public void setShopCallback(Runnable shopCallback) {
 		this.shopCallback = shopCallback;
 	}
-	
 	// getters
 	public Map getMap() {
 		return map;

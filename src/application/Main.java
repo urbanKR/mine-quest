@@ -17,10 +17,11 @@ import javafx.stage.StageStyle;
 public class Main extends Application {
 
 	double oxygenOpacity = 1;
-	
+
 	MapView view;
-	
+
 	private String selectedCharacter = "miner-version1.png";
+	private Difficulty selectedDifficulty = Difficulty.EASY;
 
 	@Override
 	public void start(Stage stage) {
@@ -154,7 +155,7 @@ public class Main extends Application {
 		nextButton.setOnMouseExited(e -> nextButton
 				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;"));
 
-		nextButton.setOnAction(e -> showGameScreen(primaryStage));
+		nextButton.setOnAction(e -> showDifficultySelectionScreen(primaryStage));
 
 		layout.getChildren().addAll(title, characterBox, characterName, nextButton);
 
@@ -162,9 +163,160 @@ public class Main extends Application {
 		primaryStage.setScene(characterScene);
 	}
 
+	private void showDifficultySelectionScreen(Stage primaryStage) {
+		VBox layout = new VBox(30);
+		layout.setAlignment(Pos.CENTER);
+		layout.setStyle("-fx-background-color: #F0F0F0;");
+
+		Text title = new Text("Select Difficulty");
+		title.setFont(Font.font("Arial", FontWeight.BOLD, 42));
+
+		HBox difficultyBox = new HBox(40);
+		difficultyBox.setAlignment(Pos.CENTER);
+
+		Button leftArrow = new Button("◄");
+		leftArrow.setFont(Font.font("Arial", FontWeight.BOLD, 36));
+		leftArrow.setMinSize(80, 80);
+		leftArrow.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;");
+
+		Label difficultyDisplay = new Label();
+		difficultyDisplay.setMinSize(200, 150);
+		difficultyDisplay.setMaxSize(200, 150);
+		difficultyDisplay.setAlignment(Pos.CENTER);
+		difficultyDisplay.setStyle(
+				"-fx-background-color: white; " +
+						"-fx-border-color: black; " +
+						"-fx-border-width: 3px; " +
+						"-fx-font-size: 32px; " +
+						"-fx-font-weight: bold;"
+		);
+
+		Button rightArrow = new Button("►");
+		rightArrow.setFont(Font.font("Arial", FontWeight.BOLD, 36));
+		rightArrow.setMinSize(80, 80);
+		rightArrow.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;");
+
+		Text difficultyDescription = new Text();
+		difficultyDescription.setFont(Font.font("Arial", 18));
+		difficultyDescription.setTextAlignment(TextAlignment.CENTER);
+		difficultyDescription.setWrappingWidth(500);
+
+		final Difficulty[] difficulties = {Difficulty.EASY, Difficulty.MEDIUM, Difficulty.HARD};
+		final int[] currentIndex = {0};
+
+		Runnable updateDifficulty = () -> {
+			selectedDifficulty = difficulties[currentIndex[0]];
+			difficultyDisplay.setText(selectedDifficulty.getDisplayName().toUpperCase());
+
+			switch (selectedDifficulty) {
+				case EASY:
+					difficultyDisplay.setStyle(
+							"-fx-background-color: #90EE90; " +
+									"-fx-border-color: black; " +
+									"-fx-border-width: 3px; " +
+									"-fx-font-size: 32px; " +
+									"-fx-font-weight: bold;"
+					);
+					difficultyDescription.setText(
+							"Smaller map with abundant resources.\n" +
+									"Keys are easier to find.\n" +
+									"Perfect for beginners!"
+					);
+					break;
+				case MEDIUM:
+					difficultyDisplay.setStyle(
+							"-fx-background-color: #FFD700; " +
+									"-fx-border-color: black; " +
+									"-fx-border-width: 3px; " +
+									"-fx-font-size: 32px; " +
+									"-fx-font-weight: bold;"
+					);
+					difficultyDescription.setText(
+							"Balanced map size with moderate resources.\n" +
+									"Keys require some exploration.\n" +
+									"A good challenge!"
+					);
+					break;
+				case HARD:
+					difficultyDisplay.setStyle(
+							"-fx-background-color: #FF6B6B; " +
+									"-fx-border-color: black; " +
+									"-fx-border-width: 3px; " +
+									"-fx-font-size: 32px; " +
+									"-fx-font-weight: bold;"
+					);
+					difficultyDescription.setText(
+							"Large map with scarce resources.\n" +
+									"Keys are deeply hidden.\n" +
+									"For experienced miners only!"
+					);
+					break;
+			}
+		};
+
+		updateDifficulty.run();
+
+		leftArrow.setOnAction(e -> {
+			currentIndex[0] = (currentIndex[0] - 1 + difficulties.length) % difficulties.length;
+			updateDifficulty.run();
+		});
+
+		rightArrow.setOnAction(e -> {
+			currentIndex[0] = (currentIndex[0] + 1) % difficulties.length;
+			updateDifficulty.run();
+		});
+
+		leftArrow.setOnMouseEntered(e -> leftArrow
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 3px;"));
+		leftArrow.setOnMouseExited(e -> leftArrow
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;"));
+
+		rightArrow.setOnMouseEntered(e -> rightArrow
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 3px;"));
+		rightArrow.setOnMouseExited(e -> rightArrow
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;"));
+
+		difficultyBox.getChildren().addAll(leftArrow, difficultyDisplay, rightArrow);
+
+		HBox buttonBox = new HBox(20);
+		buttonBox.setAlignment(Pos.CENTER);
+
+		Button backButton = new Button("BACK");
+		backButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+		backButton.setMinWidth(150);
+		backButton.setMinHeight(50);
+		backButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;");
+
+		Button nextButton = new Button("NEXT");
+		nextButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+		nextButton.setMinWidth(150);
+		nextButton.setMinHeight(50);
+		nextButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;");
+
+		backButton.setOnMouseEntered(e -> backButton
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 3px;"));
+		backButton.setOnMouseExited(e -> backButton
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;"));
+
+		nextButton.setOnMouseEntered(e -> nextButton
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 3px;"));
+		nextButton.setOnMouseExited(e -> nextButton
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;"));
+
+		backButton.setOnAction(e -> showCharacterSelectionScreen(primaryStage));
+		nextButton.setOnAction(e -> showGameScreen(primaryStage));
+
+		buttonBox.getChildren().addAll(backButton, nextButton);
+
+		layout.getChildren().addAll(title, difficultyBox, difficultyDescription, buttonBox);
+
+		Scene difficultyScene = new Scene(layout, 800, 600);
+		primaryStage.setScene(difficultyScene);
+	}
+
 	private void showGameScreen(Stage stage) {
 		// --- Game model ---
-		GameModel model = new GameModel(selectedCharacter);
+		GameModel model = new GameModel(selectedCharacter, selectedDifficulty);
 		model.setGameStage(stage);
 
 		model.setCallback(() -> updateVisuals());
@@ -211,42 +363,42 @@ public class Main extends Application {
 		model.setGoldCallback(() -> {
 			goldText.setText(String.valueOf(model.getMiner().getGoldAmount()));
 		});
-		
-		VBox statusBox = new VBox();
-		
-		// --- Oxygen Display ---
-				HBox oxygenDisplay = new HBox(10);
-				oxygenDisplay.setAlignment(Pos.CENTER_LEFT);
-				oxygenDisplay.setStyle("-fx-background-color: transparent; -fx-padding: 10;");
-				oxygenDisplay.setMouseTransparent(true);
 
-				Label oxygenIcon = new Label();
-				oxygenIcon.setStyle("-fx-background-image: url('file:img/oxygen-indicator.png'); " +
-						"-fx-background-size: contain; " +
-						"-fx-background-repeat: no-repeat; " +
-						"-fx-background-position: center; " +
-						"-fx-min-width: 30; " +
-						"-fx-min-height: 30; " +
-						"-fx-pref-width: 30; " +
-						"-fx-pref-height: 30;");
-				Label oxygenText = new Label("0");
-				oxygenText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-				oxygenText.setTextFill(Color.BLACK);
-				oxygenDisplay.getChildren().addAll(oxygenIcon, oxygenText);
-				
-				model.setOxygenCallback(() -> {
-					if(model.getMiner().getOxygen() < 0 && oxygenOpacity == 1) {
-						oxygenOpacity = 0.5;
-					}else {
-						oxygenOpacity = 1;
-					}
-					oxygenText.setOpacity(oxygenOpacity);
-					oxygenText.setText(model.getMiner().getOxygen() < 1 ? "0" : String.valueOf(model.getMiner().getOxygen()));
-				});
+		VBox statusBox = new VBox();
+
+		// --- Oxygen Display ---
+		HBox oxygenDisplay = new HBox(10);
+		oxygenDisplay.setAlignment(Pos.CENTER_LEFT);
+		oxygenDisplay.setStyle("-fx-background-color: transparent; -fx-padding: 10;");
+		oxygenDisplay.setMouseTransparent(true);
+
+		Label oxygenIcon = new Label();
+		oxygenIcon.setStyle("-fx-background-image: url('file:img/oxygen-indicator.png'); " +
+				"-fx-background-size: contain; " +
+				"-fx-background-repeat: no-repeat; " +
+				"-fx-background-position: center; " +
+				"-fx-min-width: 30; " +
+				"-fx-min-height: 30; " +
+				"-fx-pref-width: 30; " +
+				"-fx-pref-height: 30;");
+		Label oxygenText = new Label("0");
+		oxygenText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+		oxygenText.setTextFill(Color.BLACK);
+		oxygenDisplay.getChildren().addAll(oxygenIcon, oxygenText);
+
+		model.setOxygenCallback(() -> {
+			if(model.getMiner().getOxygen() < 0 && oxygenOpacity == 1) {
+				oxygenOpacity = 0.5;
+			}else {
+				oxygenOpacity = 1;
+			}
+			oxygenText.setOpacity(oxygenOpacity);
+			oxygenText.setText(model.getMiner().getOxygen() < 1 ? "0" : String.valueOf(model.getMiner().getOxygen()));
+		});
 
 		statusBox.setMouseTransparent(true);
 		statusBox.getChildren().addAll(goldDisplay, oxygenDisplay);
-				
+
 		// --- Layout ---
 		StackPane overlayPane = new StackPane();
 		overlayPane.getChildren().add(scrollPane);
@@ -426,7 +578,7 @@ public class Main extends Application {
 
 		dialog.show();
 	}
-	
+
 	private void showShopDialog(Stage stage, GameModel model) {
 		Dialog<ButtonType> dialog = new Dialog<>();
 		dialog.setTitle("Shop");
@@ -599,5 +751,8 @@ public class Main extends Application {
 
 		dialog.getDialogPane().setContent(dialogLayout);
 		dialog.showAndWait();
+	}
+	public static void main(String[] args) {
+		launch(args);
 	}
 }
