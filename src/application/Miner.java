@@ -6,6 +6,12 @@ public class Miner {
     private int pickaxeLevel = 0;
     private String characterImage;
     private int goldAmount = 0;
+    private int maxOxygen = 10;
+    private int currentOxygen = maxOxygen;
+    private int layerSize = 10;
+    private int groundLevel = 4;
+    
+    private Runnable loseCallback;
 
     public Miner(int row, int col, String characterImage) {
         this.row = row;
@@ -29,6 +35,22 @@ public class Miner {
     public int getToolsDamage() {
         return toolsDamage;
     }
+    
+    public void depleteOxygen() {
+    	currentOxygen -= row / layerSize + 1;
+    	
+    	if(currentOxygen < - 8) {
+    		if(loseCallback != null) {
+    			loseCallback.run();
+    		}
+    	}
+    	
+    	if(row == groundLevel) {
+    		currentOxygen = maxOxygen;
+    	}
+    	
+    	System.out.println(currentOxygen);
+    }
 
     public void setToolsDamage(int damage) {
         this.toolsDamage = damage;
@@ -46,6 +68,10 @@ public class Miner {
     public int getGoldAmount() {
         return goldAmount;
     }
+    
+    public int getOxygen() {
+        return currentOxygen;
+    }
 
     public void setGoldAmount(int goldAmount) {
         this.goldAmount = goldAmount;
@@ -61,4 +87,9 @@ public class Miner {
         this.goldAmount -= amount;
         return true;
     }
+    
+    // Callback
+    public void setLoseCallback(Runnable loseCallback) {
+		this.loseCallback = loseCallback;
+	}
 }

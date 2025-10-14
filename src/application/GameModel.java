@@ -1,9 +1,11 @@
 package application;
 
 import java.awt.Point;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 import java.util.LinkedList;
 import java.util.Queue;
-
 import javafx.animation.PauseTransition;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -19,7 +21,9 @@ public class GameModel {
 	private Stage gameStage;
 	private Runnable callback;
 	private Runnable winCallback;
+	private Runnable loseCallback;
 	private Runnable goldCallback;
+	private Runnable oxygenCallback;
 	private Runnable shopCallback;
 
 	private boolean gameWon;
@@ -32,12 +36,16 @@ public class GameModel {
 
 	private int keysCollected = 0;
 	private final int totalKeys = 3;
+	
+	private Timeline timer;
 
 	public GameModel(String characterImage) {
 		this.miner = new Miner(startRowMiner, startColMiner, characterImage);
 		this.map = new Map(miner, this);
 		this.gameWon = false;
 
+		miner.setLoseCallback(() -> {timer.stop(); loseCallback.run();});
+		
 		this.rowsNum = map.getRows();
 		this.colsNum = map.getCols();
 
@@ -45,6 +53,7 @@ public class GameModel {
 
 		// Place miner on the map at start
 		map.getCells()[startRowMiner][startColMiner].setHasMiner(true);
+		startTimer();
 	}
 
 	public boolean moveMiner(Direction direction) {
@@ -78,7 +87,6 @@ public class GameModel {
 
 		// add miner to new cell
 		cells[newRow][newCol].setHasMiner(true);
-		System.out.print("hi");
 
 		return true;
 	}
@@ -161,6 +169,17 @@ public class GameModel {
 			}
 		}
 	}
+	
+	public void startTimer() {
+		
+		timer = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+			miner.depleteOxygen();
+			oxygenCallback.run();
+		}));
+		
+		timer.setCycleCount(Timeline.INDEFINITE);
+		timer.play();
+	}
 
 	public void setGameStage(Stage stage) {
 		this.gameStage = stage;
@@ -180,12 +199,17 @@ public class GameModel {
 	public void setWinCallback(Runnable winCallback) {
 		this.winCallback = winCallback;
 	}
+	
+	public void setLoseCallback(Runnable loseCallback) {
+		this.loseCallback = loseCallback;
+	}
 
 	public void setGoldCallback(Runnable goldCallback) { this.goldCallback = goldCallback; }
+	public void setOxygenCallback(Runnable oxygenCallback) {this.oxygenCallback = oxygenCallback; }
 	public void setShopCallback(Runnable shopCallback) {
 		this.shopCallback = shopCallback;
 	}
-
+	
 	// getters
 	public Map getMap() {
 		return map;

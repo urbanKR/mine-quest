@@ -16,7 +16,10 @@ import javafx.stage.StageStyle;
 
 public class Main extends Application {
 
+	double oxygenOpacity = 1;
+	
 	MapView view;
+	
 	private String selectedCharacter = "miner-version1.png";
 
 	@Override
@@ -166,6 +169,7 @@ public class Main extends Application {
 
 		model.setCallback(() -> updateVisuals());
 		model.setWinCallback(() -> showWinDialog(stage));
+		model.setLoseCallback(() -> showLoseDialog(stage));
 		model.setShopCallback(() -> showShopDialog(stage, model));
 
 		// --- GridPane for map ---
@@ -207,11 +211,46 @@ public class Main extends Application {
 		model.setGoldCallback(() -> {
 			goldText.setText(String.valueOf(model.getMiner().getGoldAmount()));
 		});
+		
+		VBox statusBox = new VBox();
+		
+		// --- Oxygen Display ---
+				HBox oxygenDisplay = new HBox(10);
+				oxygenDisplay.setAlignment(Pos.CENTER_LEFT);
+				oxygenDisplay.setStyle("-fx-background-color: transparent; -fx-padding: 10;");
+				oxygenDisplay.setMouseTransparent(true);
 
+				Label oxygenIcon = new Label();
+				oxygenIcon.setStyle("-fx-background-image: url('file:img/oxygen-indicator.png'); " +
+						"-fx-background-size: contain; " +
+						"-fx-background-repeat: no-repeat; " +
+						"-fx-background-position: center; " +
+						"-fx-min-width: 30; " +
+						"-fx-min-height: 30; " +
+						"-fx-pref-width: 30; " +
+						"-fx-pref-height: 30;");
+				Label oxygenText = new Label("0");
+				oxygenText.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+				oxygenText.setTextFill(Color.BLACK);
+				oxygenDisplay.getChildren().addAll(oxygenIcon, oxygenText);
+				
+				model.setOxygenCallback(() -> {
+					if(model.getMiner().getOxygen() < 0 && oxygenOpacity == 1) {
+						oxygenOpacity = 0.5;
+					}else {
+						oxygenOpacity = 1;
+					}
+					oxygenText.setOpacity(oxygenOpacity);
+					oxygenText.setText(model.getMiner().getOxygen() < 1 ? "0" : String.valueOf(model.getMiner().getOxygen()));
+				});
+
+		statusBox.setMouseTransparent(true);
+		statusBox.getChildren().addAll(goldDisplay, oxygenDisplay);
+				
 		// --- Layout ---
 		StackPane overlayPane = new StackPane();
 		overlayPane.getChildren().add(scrollPane);
-		overlayPane.getChildren().add(goldDisplay);
+		overlayPane.getChildren().add(statusBox);
 		StackPane.setAlignment(goldDisplay, Pos.TOP_LEFT);
 		StackPane.setMargin(goldDisplay, new Insets(0, 0, 600, 0));
 
@@ -327,6 +366,67 @@ public class Main extends Application {
 		dialog.showAndWait();
 	}
 
+	private void showLoseDialog(Stage stage) {
+		Dialog<ButtonType> dialog = new Dialog<>();
+		dialog.setTitle("Oh uh");
+		dialog.initStyle(StageStyle.UNDECORATED);
+		dialog.getDialogPane().getButtonTypes().clear();
+
+		VBox dialogLayout = new VBox(20);
+		dialogLayout.setAlignment(Pos.CENTER);
+		dialogLayout.setStyle("-fx-background-color: #F0F0F0; -fx-padding: 30;");
+		dialog.getDialogPane().getScene().getRoot().setStyle("-fx-border-color: black; -fx-border-width: 3px;");
+
+		Text title = new Text("You lost...");
+		title.setFont(Font.font("Arial", FontWeight.BOLD, 36));
+
+		Text message = new Text("Next time watch out on this oxygen level");
+		message.setFont(Font.font("Arial", 18));
+		message.setTextAlignment(TextAlignment.CENTER);
+
+		HBox buttonBox = new HBox(20);
+		buttonBox.setAlignment(Pos.CENTER);
+
+		Button backToMenuButton = new Button("Back to Menu");
+		backToMenuButton.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+		backToMenuButton.setMinWidth(150);
+		backToMenuButton.setMinHeight(40);
+		backToMenuButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;");
+
+		Button exitGameButton = new Button("Exit Game");
+		exitGameButton.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+		exitGameButton.setMinWidth(150);
+		exitGameButton.setMinHeight(40);
+		exitGameButton.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;");
+
+		backToMenuButton.setOnMouseEntered(e -> backToMenuButton
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 3px;"));
+		backToMenuButton.setOnMouseExited(e -> backToMenuButton
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;"));
+
+		exitGameButton.setOnMouseEntered(e -> exitGameButton
+				.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: black; -fx-border-width: 3px;"));
+		exitGameButton.setOnMouseExited(e -> exitGameButton
+				.setStyle("-fx-background-color: white; -fx-border-color: black; -fx-border-width: 3px;"));
+
+		buttonBox.getChildren().addAll(backToMenuButton, exitGameButton);
+		dialogLayout.getChildren().addAll(title, message, buttonBox);
+
+		dialog.getDialogPane().setContent(dialogLayout);
+
+		backToMenuButton.setOnAction(e -> {
+			dialog.setResult(ButtonType.CLOSE);
+			showMenuScreen(stage);
+		});
+
+		exitGameButton.setOnAction(e -> {
+			dialog.setResult(ButtonType.CLOSE);
+			stage.close();
+		});
+
+		dialog.show();
+	}
+	
 	private void showShopDialog(Stage stage, GameModel model) {
 		Dialog<ButtonType> dialog = new Dialog<>();
 		dialog.setTitle("Shop");
