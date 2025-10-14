@@ -5,7 +5,10 @@ import javafx.scene.ImageCursor;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseDragEvent;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Cell extends Button {
 	private int row;
@@ -35,12 +38,12 @@ public class Cell extends Button {
 
 
 		switch (type) {
-			case SKY, FINAL_CHEST:
+			case SKY, FINAL_CHEST, SHOP:
 				walkable = false;
 				hardness = 0;
 				destroyable = false;
 				break;
-			case SKY_WALKABLE, FINAL_AREA, SHOP:
+			case SKY_WALKABLE, FINAL_AREA:
 				walkable = true;
 				hardness = 0;
 				destroyable = false;
@@ -105,12 +108,15 @@ public class Cell extends Button {
 		updateVisual();
 
 		this.setOnAction(e -> {
-			if (type == CellType.SHOP && hasMiner) {
+			var adjacentCells = getAdjacentCells();
+			var adjacentCellsHasMiner = adjacentCells.stream().anyMatch(Cell::hasMiner);
+			if (type == CellType.SHOP && adjacentCellsHasMiner) {
 				interactWithShop(model);
 			} else {
 				mineCell();
 			}
 		});
+
 	}
 
 	public void mineCell() {
@@ -375,5 +381,24 @@ public class Cell extends Button {
             case SHOP -> "transparent";
             default -> "#87CEEB";
         };
+	}
+
+	private List<Cell> getAdjacentCells() {
+		List<Cell> adjacentCells = new ArrayList<>();
+		Cell[][] cells = map.getCells();
+		int[][] directions = {
+				{-1, 0}, {1, 0}, {0, -1}, {0, 1},
+				{-1, -1}, {-1, 1}, {1, -1}, {1, 1}
+		};
+
+		for (int[] d : directions) {
+			int newRow = row + d[0];
+			int newCol = col + d[1];
+			if (newRow >= 0 && newRow < map.getRows() && newCol >= 0 && newCol < map.getCols()) {
+				adjacentCells.add(cells[newRow][newCol]);
+			}
+		}
+
+		return adjacentCells;
 	}
 }
