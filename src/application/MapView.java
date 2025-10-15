@@ -2,16 +2,29 @@ package application;
 
 import javafx.scene.layout.GridPane;
 
+/**
+ * Handles the visual representation and rendering of the game map.
+ * Manages the GridPane display and cell visibility around the player.
+ */
 public class MapView {
 	private final GridPane gridPane;
 	private final GameModel gameModel;
 
+	/**
+	 * Constructs a new MapView with the specified grid pane and game model.
+	 *
+	 * @param gridPane the JavaFX GridPane for displaying cells
+	 * @param gameModel the game model containing map data
+	 */
 	public MapView(GridPane gridPane, GameModel gameModel) {
 		this.gridPane = gridPane;
 		this.gameModel = gameModel;
 		initializeGrid();
 	}
 
+	/**
+	 * Initializes the grid by populating it with cells from the game model.
+	 */
 	private void initializeGrid() {
 		gridPane.getChildren().clear();
 		Cell[][] cells = gameModel.getMap().getCells();
@@ -25,6 +38,9 @@ public class MapView {
 		revealAroundMiner();
 	}
 
+	/**
+	 * Updates the visual appearance of all cells in the map.
+	 */
 	public void updateView() {
 		for (Cell[] row : gameModel.getMap().getCells()) {
 			for (Cell cell : row) {
@@ -33,6 +49,10 @@ public class MapView {
 		}
 	}
 
+	/**
+	 * Reveals cells around the miner's position and sets mineable status.
+	 * Sky, walkable sky, and shop cells are always revealed.
+	 */
 	public void revealAroundMiner() {
 		int minerRow = gameModel.getMiner().getRow();
 		int minerCol = gameModel.getMiner().getCol();

@@ -1,33 +1,81 @@
 package application;
 
+/**
+ * Represents the difficulty levels available in the game, each with predefined map layouts.
+ *
+ * <p>Each difficulty level provides a different map configuration that affects:
+ * <ul>
+ *   <li>Resource distribution and density</li>
+ *   <li>Enemy placement and frequency</li>
+ *   <li>Map complexity and challenge level</li>
+ *   <li>Overall game progression pace</li>
+ * </ul>
+ * </p>
+ *
+ * <p>The enum also contains static methods that return pre-defined 2D array map layouts
+ * where each integer corresponds to a specific cell type.</p>
+ */
 public enum Difficulty {
+    /**
+     * Easy difficulty - simpler layout with abundant resources and fewer challenges.
+     * Suitable for beginners learning game mechanics.
+     */
     EASY("Easy"),
+
+    /**
+     * Medium difficulty - balanced layout with moderate resource distribution and challenges.
+     * Provides a well-rounded gaming experience.
+     */
     MEDIUM("Medium"),
+
+    /**
+     * Hard difficulty - complex layout with scarce resources and increased challenges.
+     * Designed for experienced players seeking greater difficulty.
+     */
     HARD("Hard");
 
+    /** The user-friendly display name for the difficulty level */
     private final String displayName;
 
+    /**
+     * Constructs a Difficulty level with the specified display name.
+     *
+     * @param displayName the user-visible name for this difficulty level
+     */
     Difficulty(String displayName) {
         this.displayName = displayName;
     }
 
+    /**
+     * Gets the display name of this difficulty level.
+     *
+     * @return the user-friendly name (e.g., "Easy", "Medium", "Hard")
+     */
     public String getDisplayName() {
         return displayName;
     }
 
-    // 0 = SKY
-    // 1 = SKY_WALKABLE(GROUND)
-    // 2 = GRASS
-    // 3 = DIRT
-    // 4 = SECRET_KEY
-    // 5 = FINAL_AREA
-    // 6 = FINAL_CHEST
-    // 7 = SHOP
-    // 8 = GRAVEL
-    // 9 = STONE
-    // 10 = COAL
-    // 11 = IRON
-    // 12 = GOLD
+    // ========== CELL TYPE MAPPING CONSTANTS ==========
+    // The following integers represent different cell types in the map layouts:
+    // 0  = SKY (non-walkable background)
+    // 1  = SKY_WALKABLE (walkable ground surface)
+    // 2  = GRASS (surface block, destroyable)
+    // 3  = DIRT (common underground block, destroyable)
+    // 4  = SECRET_KEY (special block containing keys, destroyable)
+    // 5  = FINAL_AREA (end game walkable area)
+    // 6  = FINAL_CHEST (victory chest, requires all keys)
+    // 7  = SHOP (merchant interaction point)
+    // 8  = GRAVEL (loose material, low hardness, destroyable)
+    // 9  = STONE (common rock, moderate hardness, destroyable)
+    // 10 = COAL (valuable resource, moderate hardness, destroyable)
+    // 11 = IRON (valuable resource, high hardness, destroyable)
+    // 12 = GOLD (premium resource, high hardness, destroyable)
+    // 100 = Special marker (typically used for enemy spawn positions)
+
+    /**
+     * Returns the pre-defined map layout for Easy difficulty.
+     * @return a 2D integer array representing the easy difficulty map layout
+     */
     public static int[][] getEasyLayout() {
         return new int[][] {
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -65,6 +113,10 @@ public enum Difficulty {
 
     }
 
+    /**
+     * Returns the pre-defined map layout for Medium difficulty.
+     * @return a 2D integer array representing the medium difficulty map layout
+     */
     public static int[][] getMediumLayout() {
         return new int[][] {
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
@@ -112,6 +164,10 @@ public enum Difficulty {
 
     }
 
+    /**
+     * Returns the pre-defined map layout for Hard difficulty.
+     * @return a 2D integer array representing the hard difficulty map layout
+     */
     public static int[][] getHardLayout() {
         return new int[][] {
                 { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },

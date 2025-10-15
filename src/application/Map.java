@@ -5,6 +5,10 @@ import static application.Difficulty.getEasyLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents the game map containing cells, enemies, and game layout.
+ * Constructs the game world based on the selected difficulty level.
+ */
 public class Map {
 	private int rows = 30;
 	private int cols = 20;
@@ -13,6 +17,13 @@ public class Map {
 	private List<Enemy> enemies;
 	private int keyCounter = 0;
 
+	/**
+	 * Constructs a new map with the specified difficulty.
+	 *
+	 * @param miner the player character
+	 * @param model the game model for cell interactions
+	 * @param difficulty the difficulty level determining map layout
+	 */
 	public Map(Miner miner, GameModel model, Difficulty difficulty) {
 		int[][] layout = switch (difficulty) {
 			case MEDIUM -> Difficulty.getMediumLayout();
@@ -60,18 +71,38 @@ public class Map {
 		}
 	}
 
+	/**
+	 * Gets the 2D array of cells representing the map.
+	 *
+	 * @return the grid of cells
+	 */
 	public Cell[][] getCells() {
 		return cells;
 	}
 
+	/**
+	 * Gets the number of rows in the map.
+	 *
+	 * @return the row count
+	 */
 	public int getRows() {
 		return rows;
 	}
 
+	/**
+	 * Gets the number of columns in the map.
+	 *
+	 * @return the column count
+	 */
 	public int getCols() {
 		return cols;
 	}
 
+	/**
+	 * Gets the list of enemies on the map.
+	 *
+	 * @return the list of enemy objects
+	 */
 	public List<Enemy> getEnemies() {
 		return enemies;
 	}

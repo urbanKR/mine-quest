@@ -14,6 +14,10 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+/**
+ * Main application class for Miner's Quest game.
+ * Handles UI screens, game flow, and user interactions.
+ */
 public class Main extends Application {
 
 	double oxygenOpacity = 1;
@@ -23,6 +27,9 @@ public class Main extends Application {
 	private String selectedCharacter = "miner-version1.png";
 	private Difficulty selectedDifficulty = Difficulty.EASY;
 
+	/**
+	 * Starts the JavaFX application.
+	 */
 	@Override
 	public void start(Stage stage) {
 		stage.setTitle("Miner's Quest");
@@ -30,6 +37,9 @@ public class Main extends Application {
 		showMenuScreen(stage);
 	}
 
+	/**
+	 * Displays the main menu screen.
+	 */
 	private void showMenuScreen(Stage primaryStage) {
 		VBox menuLayout = new VBox(20);
 		menuLayout.setAlignment(Pos.CENTER);
@@ -70,6 +80,9 @@ public class Main extends Application {
 		primaryStage.show();
 	}
 
+	/**
+	 * Displays character selection screen.
+	 */
 	private void showCharacterSelectionScreen(Stage primaryStage) {
 		VBox layout = new VBox(30);
 		layout.setAlignment(Pos.CENTER);
@@ -163,6 +176,9 @@ public class Main extends Application {
 		primaryStage.setScene(characterScene);
 	}
 
+	/**
+	 * Displays difficulty selection screen.
+	 */
 	private void showDifficultySelectionScreen(Stage primaryStage) {
 		VBox layout = new VBox(30);
 		layout.setAlignment(Pos.CENTER);
@@ -314,6 +330,9 @@ public class Main extends Application {
 		primaryStage.setScene(difficultyScene);
 	}
 
+	/**
+	 * Displays the main game screen.
+	 */
 	private void showGameScreen(Stage stage) {
 		// --- Game model ---
 		GameModel model = new GameModel(selectedCharacter, selectedDifficulty);
@@ -451,11 +470,17 @@ public class Main extends Application {
 		gridPane.requestFocus();
 	}
 
+	/**
+	 * Updates game visuals and reveals area around miner.
+	 */
 	private void updateVisuals() {
 		view.revealAroundMiner();
 		view.updateView();
 	}
 
+	/**
+	 * Scrolls the view to follow the miner's position.
+	 */
 	private void scrollToMiner(ScrollPane scrollPane, GridPane gridPane, Miner miner) {
 		double cellHeight = 40;
 		double viewportHeight = scrollPane.getViewportBounds().getHeight();
@@ -470,6 +495,9 @@ public class Main extends Application {
 		}
 	}
 
+	/**
+	 * Shows win dialog when player completes the game.
+	 */
 	private void showWinDialog(Stage stage) {
 		Dialog<ButtonType> dialog = new Dialog<>();
 		dialog.setTitle("Congratulations!");
@@ -531,6 +559,9 @@ public class Main extends Application {
 		dialog.showAndWait();
 	}
 
+	/**
+	 * Shows lose dialog when player runs out of oxygen.
+	 */
 	private void showLoseDialog(Stage stage) {
 		Dialog<ButtonType> dialog = new Dialog<>();
 		dialog.setTitle("Oh uh");
@@ -592,6 +623,9 @@ public class Main extends Application {
 		dialog.show();
 	}
 
+	/**
+	 * Shows shop dialog for purchasing upgrades.
+	 */
 	private void showShopDialog(Stage stage, GameModel model) {
 		Dialog<ButtonType> dialog = new Dialog<>();
 		dialog.setTitle("Shop");
@@ -766,6 +800,9 @@ public class Main extends Application {
 		dialog.showAndWait();
 	}
 
+	/**
+	 * Shows popup when player collects a key.
+	 */
 	private void showKeyCodePopup(Stage stage, String keyCode, int keyNumber) {
 		Dialog<ButtonType> dialog = new Dialog<>();
 		dialog.setTitle("Secret Code Revealed!");
@@ -810,6 +847,9 @@ public class Main extends Application {
 		dialog.showAndWait();
 	}
 
+	/**
+	 * Shows dialog for entering final chest code.
+	 */
 	private void showChestCodeDialog(Stage stage, GameModel model) {
 		Dialog<ButtonType> dialog = new Dialog<>();
 		dialog.setTitle("Enter Code");
@@ -893,6 +933,9 @@ public class Main extends Application {
 		dialog.getDialogPane().setContent(dialogLayout);
 		dialog.showAndWait();
 	}
+	/**
+	 * Main method to launch the application.
+	 */
 	public static void main(String[] args) {
 		launch(args);
 	}
